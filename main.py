@@ -36,8 +36,7 @@ def process_word(response_type, word):
         elif response_type == "json":
             pass
         else:
-
-        print(f"{count} solution{'' if count == 1 else 's'} using element symbols:")
+            return "Unrecognised response type."
 
     else:
         return "No solution found."
