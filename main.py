@@ -34,8 +34,7 @@ def process_word(response_type, word):
                 solutions += "\n- ".join(two_char_symbols)
             return summary + "\n" + solutions
         elif response_type == "json":
-            print(sorted_results)
-            return { solutions : sorted_results }
+            return { "solutions" : sorted_results }
         else:
             return "Unrecognised response type."
 
