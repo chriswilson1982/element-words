@@ -29,14 +29,12 @@ def process_word(response_type, word):
             summary = f"{count} solution{'' if count == 1 else 's'} using element symbols:"
             solutions = ""
             for solution, symbols in sorted_results:
-                two_char_symbols = map(lambda x: x if len(
-                    x) == 2 else x + " ", symbols)
-                solutions += "<br />- ".join(two_char_symbols)
+                solutions += "<br />- " + solution + ": " + " ".join(symbols)
             return summary + "<br />" + solutions
         elif response_type == "json":
             return { 
                 "word" : word.lower(),
-                "solutions" : map(lambda result: {"text": result[0], "array": result[1] }, sorted_results)
+                "solutions" : list(map(lambda result: {"text": result[0], "array": result[1] }, sorted_results))
                 }
         else:
             return "Unrecognised response type."
