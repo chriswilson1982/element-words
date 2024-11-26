@@ -29,7 +29,7 @@ def process_word(response_type, word):
             summary = f"{count} solution{'' if count == 1 else 's'} using element symbols:"
             solutions = ""
             for solution, symbols in sorted_results:
-                solutions += "<br />- " + solution + ": " + " ".join(symbols)
+                solutions += "<br />" + solution + ": " + " ".join(symbols)
             return summary + "<br />" + solutions
         elif response_type == "json":
             return { 
