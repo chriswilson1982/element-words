@@ -31,10 +31,10 @@ def process_word(response_type, word):
             for solution, symbols in sorted_results:
                 two_char_symbols = map(lambda x: x if len(
                     x) == 2 else x + " ", symbols)
-                solutions += "\n-" + " ".join(two_char_symbols)
+                solutions += "\n- ".join(two_char_symbols)
             return summary + "\n" + solutions
         elif response_type == "json":
-            pass
+            return { solutions : sorted_results }
         else:
             return "Unrecognised response type."
 
