@@ -12,33 +12,21 @@ ELEMENT_SYMBOLS = [
 app = Bottle()
 
 # INDEX
-
-
 @app.get('/')
 def index():
     return "Welcome to Element Words!"
 
 
-@app.get('/word/<response_type>/<word>')
-def process_word(response_type, word):
+@app.get('/word/<word>')
+def process_word(word):
     combinations = find_combinations(word)
     if combinations:
         count = len(combinations)
         sorted_results = sorted(combinations, key=lambda n: len(n[1]))
-        if response_type == "text":
-            summary = f"{count} solution{'' if count == 1 else 's'} using element symbols:"
-            solutions = ""
-            for solution, symbols in sorted_results:
-                solutions += "<br />" + solution + ": " + " ".join(symbols)
-            return summary + "<br />" + solutions
-        elif response_type == "json":
-            return { 
-                "word" : word.lower(),
-                "solutions" : list(map(lambda result: {"text": result[0], "array": result[1] }, sorted_results))
-                }
-        else:
-            return "Unrecognised response type."
-
+        return {
+            "word" : word.lower(),
+            "solutions" : list(map(lambda result: {"text": result[0], "array": result[1] }, sorted_results))
+        }
     else:
         return "No solution found."
 
