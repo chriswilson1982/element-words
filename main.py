@@ -31,7 +31,7 @@ def process_word(word):
             "solutions" : list(map(lambda result: {"text": result[0], "symbols": result[1], "elements": [ELEMENTS[x] for x in result[1]]}, sorted_results))
         }
     else:
-        return return {
+        return {
             "word" : word.lower(),
             "solutions" : []
         }
