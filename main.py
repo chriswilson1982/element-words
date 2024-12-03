@@ -20,7 +20,6 @@ app = Bottle()
 def index():
     return "Welcome to Element Words!"
 
-
 @app.get('/word/<word>')
 def process_word(word):
     combinations = find_combinations(word)
@@ -32,8 +31,10 @@ def process_word(word):
             "solutions" : list(map(lambda result: {"text": result[0], "symbols": result[1], "elements": [ELEMENTS[x] for x in result[1]]}, sorted_results))
         }
     else:
-        return "No solution found."
-
+        return return {
+            "word" : word.lower(),
+            "solutions" : []
+        }
 
 def find_combinations(word, path="", symbols=[]):
     """
@@ -55,7 +56,6 @@ def find_combinations(word, path="", symbols=[]):
                 word[i:], path + prefix, symbols + [prefix]))
 
     return results
-
 
 # Run app
 if os.environ.get('APP_LOCATION') == 'heroku':
