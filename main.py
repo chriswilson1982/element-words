@@ -29,7 +29,7 @@ def process_word(word):
         sorted_results = sorted(combinations, key=lambda n: len(n[1]))
         return {
             "word" : word.lower(),
-            "solutions" : list(map(lambda result: {"text": result[0], "symbols": result[1] }, sorted_results))
+            "solutions" : list(map(lambda result: {"text": result[0], "symbols": result[1], "elements": ELEMENTS[x] for x in results[1]}, sorted_results))
         }
     else:
         return "No solution found."
