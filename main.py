@@ -1,7 +1,7 @@
 # coding=utf-8
 
 import os
-from bottle import Bottle
+from bottle import Bottle, response
 
 # List of all element symbols
 #ELEMENT_SYMBOLS = [
@@ -23,6 +23,7 @@ def index():
 @app.get('/word/<word>')
 def process_word(word):
     combinations = find_combinations(word)
+    response.content_type = "text/json; charset=UTF8"
     if combinations:
         count = len(combinations)
         sorted_results = sorted(combinations, key=lambda n: len(n[1]))
