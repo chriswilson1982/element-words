@@ -23,7 +23,7 @@ def index():
 @app.get('/word/<word>')
 def process_word(word):
     combinations = find_combinations(word)
-    response.content_type = "text/json; charset=UTF8"
+    response.content_type = "application/json; charset=UTF8"
     if combinations:
         count = len(combinations)
         sorted_results = sorted(combinations, key=lambda n: len(n[1]))
