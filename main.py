@@ -14,7 +14,7 @@ app = Bottle()
 @app.get('/')
 def index():
     response.content_type = "text/html; charset=UTF8"
-    return "<h1>Welcome to Element Words!</h1><p>Use the endpoint <em>/word/\<input-word\></em> to find all solutions for constructing the word from the symbols of the chemical elements.</p>"
+    return "<div style='font-family: sans-serif'><h1>Welcome to Element Words!</h1><p>Use the endpoint <em>/word/\<input-word\></em> to find all solutions for constructing the word from the symbols of the chemical elements.</p></div>"
 
 @app.get('/elements')
 def elements():
