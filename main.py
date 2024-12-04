@@ -18,7 +18,8 @@ app = Bottle()
 # INDEX
 @app.get('/')
 def index():
-    return "Welcome to Element Words!"
+    response.content_type = "text/html; charset=UTF8"
+    return "<h1>Welcome to Element Words!</h1><p>Use the endpoint <em>/word/<input-word></em> to find all solutions for constructing the word from the symbols of the chemical elements.</p>"
 
 @app.get('/word/<word>')
 def process_word(word):
