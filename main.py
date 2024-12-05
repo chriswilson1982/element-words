@@ -17,11 +17,11 @@ def index():
     return """
     <div style='font-family: sans-serif'>
     <h1>Welcome to Element Words!</h1>
-    <p>By Chris Wilson</p>
+    <h2>By Chris Wilson</h2>
     <p>API endpoints</p>
     <ul>
     <li><strong>/word/&lt;input-word&gt;</strong> - return all solutions for constructing the word from the symbols of the chemical elements.</li>
-    <li><strong>/elements</strong> - return an array of objects representing all of the checmical elements.</li>
+    <li><strong>/elements</strong> - return an array of objects representing all of the chemical elements.</li>
     <li><strong>/symbols</strong> - return an array of the symbols of the chemical elements.</li>
     </ul>
     <p><a href="https://github.com/chriswilson1982/element-words">GitHub Repositroy</a></p>
