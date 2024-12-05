@@ -19,12 +19,16 @@ def index():
 @app.get('/elements')
 def elements():
     response.content_type = "application/json; charset=UTF8"
-    return ELEMENTS
+    return {
+        "elements" : ELEMENTS
+    }
 
 @app.get('/symbols')
 def symbols():
     response.content_type = "application/json; charset=UTF8"
-    return ELEMENT_SYMBOLS
+    return {
+        "symbols" : ELEMENT_SYMBOLS
+    }
 
 @app.get('/word/<word>')
 def process_word(word):
