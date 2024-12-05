@@ -27,7 +27,7 @@ def elements():
 def symbols():
     response.content_type = "application/json; charset=UTF8"
     return {
-        "symbols" : ELEMENT_SYMBOLS
+        "symbols" : [ELEMENT_SYMBOLS]
     }
 
 @app.get('/word/<word>')
