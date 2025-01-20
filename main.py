@@ -24,7 +24,7 @@ def index():
     <li><strong>/elements</strong> - return an array of objects representing all of the chemical elements.</li>
     <li><strong>/symbols</strong> - return an array of the symbols of the chemical elements.</li>
     </ul>
-    <p><a href="https://github.com/chriswilson1982/element-words">GitHub Repositroy</a></p>
+    <p><a href="https://github.com/chriswilson1982/element-words">GitHub Repository</a></p>
     </div>
     """
 
