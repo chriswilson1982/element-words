@@ -15,10 +15,8 @@ app = Bottle()
 # Constants
 API_VERSION = "v1"
 MAX_WORD_LENGTH = 50
-DEFAULT_PAGE_SIZE = 20
-MAX_PAGE_SIZE = 100
 
-# Error response schemas
+# Helper functions
 def create_error_response(code, message, details=None):
     """Create standardized error response"""
     error_response = {
@@ -56,6 +54,20 @@ def set_json_headers():
     response.content_type = "application/json; charset=UTF-8"
     set_cors_headers()
 
+def get_available_symbols(reverse_symbols=False):
+    """Get list of available element symbols, optionally reversed"""
+    if not reverse_symbols:
+        return ELEMENT_SYMBOLS
+    
+    # Create list with reversed two-letter symbols
+    symbols = []
+    for symbol in ELEMENT_SYMBOLS:
+        if len(symbol) == 2:
+            symbols.append(symbol[::-1])  # Reverse two-letter symbols
+        else:
+            symbols.append(symbol)  # Keep single-letter symbols as is
+    return symbols
+
 @app.hook('after_request')
 def enable_cors():
     """Enable CORS for all responses"""
@@ -91,45 +103,46 @@ def api_documentation():
     </head>
     <body>
         <h1>Element Words API v1</h1>
-        <p>A RESTful API for working with chemical elements and creating words from element symbols.</p>
+        <p>A RESTful API for creating words from chemical element symbols.</p>
         
         <h2>Base URL</h2>
         <p><code>/api/v1</code></p>
         
         <h2>Endpoints</h2>
         
-                 <div class="endpoint">
-             <p><span class="method">GET</span> <span class="url">/api/v1/elements</span></p>
-             <p>Get all chemical elements with pagination support</p>
-             <div class="params">
-                 <strong>Query Parameters:</strong><br>
-                 • <code>page</code> (optional): Page number (default: 1)<br>
-                 • <code>limit</code> (optional): Items per page (default: 20, max: 100)
-             </div>
-         </div>
+        <div class="endpoint">
+            <p><span class="method">GET</span> <span class="url">/api/v1/words/{word}/combinations</span></p>
+            <p><strong>Primary endpoint:</strong> Find all possible element combinations for a word</p>
+            <div class="params">
+                <strong>Path Parameters:</strong><br>
+                • <code>word</code>: The word to analyze (max 50 characters, alphabetic only)<br><br>
+                <strong>Query Parameters:</strong><br>
+                • <code>reverse</code> (optional): Set to "true" to reverse two-letter element symbols (He→eH, Li→iL, etc.)
+            </div>
+        </div>
+        
+        <div class="endpoint">
+            <p><span class="method">GET</span> <span class="url">/api/v1/elements</span></p>
+            <p>Get all chemical elements (reference data)</p>
+        </div>
         
         <div class="endpoint">
             <p><span class="method">GET</span> <span class="url">/api/v1/elements/{symbol}</span></p>
             <p>Get a specific element by symbol</p>
         </div>
         
-        <div class="endpoint">
-            <p><span class="method">GET</span> <span class="url">/api/v1/words/{word}/combinations</span></p>
-            <p>Find all possible element combinations for a word</p>
-            <div class="params">
-                <strong>Path Parameters:</strong><br>
-                • <code>word</code>: The word to analyze (max 50 characters, alphabetic only)
-            </div>
-        </div>
+        <h2>Examples</h2>
+        <ul>
+            <li><code>GET /api/v1/words/hero/combinations</code> → H-Er-O</li>
+            <li><code>GET /api/v1/words/hero/combinations?reverse=true</code> → Use reversed symbols (eH, rE, O)</li>
+        </ul>
         
         <h2>Response Format</h2>
-        <p>All responses follow a standardized format:</p>
         <pre>{
   "data": { ... },
   "meta": {
     "timestamp": "2023-01-01T00:00:00Z",
-    "version": "v1",
-    ...
+    "version": "v1"
   }
 }</pre>
         
@@ -147,75 +160,22 @@ def api_documentation():
     </html>
     """
 
-# Health check endpoint
-@app.get('/api/v1/health')
-def health_check():
-    """API health check endpoint"""
-    set_json_headers()
-    return create_success_response({
-        "status": "healthy",
-        "uptime": "active"
-    })
-
-# Get all elements with pagination
+# Get all elements (simple list, no pagination needed)
 @app.get('/api/v1/elements')
 def get_elements():
-    """Get all chemical elements with pagination and filtering"""
+    """Get all chemical elements"""
     set_json_headers()
     
-    try:
-        # Parse query parameters
-        page = int(request.query.get('page', 1))
-        limit = int(request.query.get('limit', DEFAULT_PAGE_SIZE))
-        
-        # Validation
-        if page < 1:
-            response.status = 400
-            return create_error_response("INVALID_PAGE", "Page must be >= 1")
-        
-        if limit < 1 or limit > MAX_PAGE_SIZE:
-            response.status = 400
-            return create_error_response("INVALID_LIMIT", f"Limit must be between 1 and {MAX_PAGE_SIZE}")
-        
-        # Prepare element data
-        elements_data = []
-        for symbol, name in ELEMENTS.items():
-            elements_data.append({
-                "symbol": symbol,
-                "name": name,
-                "atomic_number": ELEMENT_SYMBOLS.index(symbol) + 1
-            })
-        
-        # Apply pagination
-        total_count = len(elements_data)
-        start_idx = (page - 1) * limit
-        end_idx = start_idx + limit
-        paginated_elements = elements_data[start_idx:end_idx]
-        
-        # Calculate pagination metadata
-        total_pages = (total_count + limit - 1) // limit
-        has_next = page < total_pages
-        has_prev = page > 1
-        
-        meta = {
-            "pagination": {
-                "page": page,
-                "limit": limit,
-                "total_count": total_count,
-                "total_pages": total_pages,
-                "has_next": has_next,
-                "has_prev": has_prev
-            }
-        }
-        
-        return create_success_response(paginated_elements, meta)
-        
-    except ValueError:
-        response.status = 400
-        return create_error_response("INVALID_PARAMETERS", "Invalid page or limit parameter")
-    except Exception as e:
-        response.status = 500
-        return create_error_response("INTERNAL_ERROR", "An unexpected error occurred")
+    elements_data = []
+    for symbol, name in ELEMENTS.items():
+        elements_data.append({
+            "symbol": symbol,
+            "name": name,
+            "atomic_number": ELEMENT_SYMBOLS.index(symbol) + 1
+        })
+    
+    meta = {"total_count": len(elements_data)}
+    return create_success_response(elements_data, meta)
 
 # Get specific element by symbol
 @app.get('/api/v1/elements/<symbol>')
@@ -241,7 +201,7 @@ def get_element(symbol):
     
     return create_success_response(element_data)
 
-# Find word combinations
+# Find word combinations - the main API purpose
 @app.get('/api/v1/words/<word>/combinations')
 def get_word_combinations(word):
     """Find all possible element combinations for a word"""
@@ -251,6 +211,9 @@ def get_word_combinations(word):
     if not word:
         response.status = 400
         return create_error_response("MISSING_WORD", "Word parameter is required")
+    
+    # Check for reverse symbols option
+    reverse_symbols = request.query.get('reverse', '').lower() == 'true'
     
     # Sanitize input: remove non-alphabetic characters
     clean_word = ''.join(c for c in word if c.isalpha())
@@ -264,26 +227,40 @@ def get_word_combinations(word):
         return create_error_response("WORD_TOO_LONG", f"Word length exceeds maximum limit of {MAX_WORD_LENGTH} characters")
     
     try:
-        combinations = find_combinations(clean_word)
+        combinations = find_combinations(clean_word, reverse_symbols=reverse_symbols)
         
         # Format solutions
         solutions = []
         for text_repr, symbols_tuple in combinations:
+            # Map symbols back to original (non-reversed) symbols for element data
+            original_symbols = []
+            for symbol in symbols_tuple:
+                if reverse_symbols and len(symbol) == 2:
+                    # Find the original symbol by checking reversed lookup
+                    original_symbol = symbol[::-1] if symbol[::-1] in ELEMENTS else symbol
+                else:
+                    original_symbol = symbol
+                original_symbols.append(original_symbol)
+            
             solution = {
                 "representation": text_repr,
                 "symbols": list(symbols_tuple),
                 "elements": [
                     {
-                        "symbol": symbol,
-                        "name": ELEMENTS[symbol],
-                        "atomic_number": ELEMENT_SYMBOLS.index(symbol) + 1
-                    } for symbol in symbols_tuple
+                        "symbol": orig_symbol,
+                        "name": ELEMENTS[orig_symbol],
+                        "atomic_number": ELEMENT_SYMBOLS.index(orig_symbol) + 1
+                    } for orig_symbol in original_symbols
                 ]
             }
             solutions.append(solution)
         
         # Sort by number of elements used (fewer elements first)
         solutions.sort(key=lambda x: len(x['symbols']))
+        
+        meta = {}
+        if reverse_symbols:
+            meta["reverse_symbols"] = True
         
         word_data = {
             "input_word": word.lower(),
@@ -292,13 +269,13 @@ def get_word_combinations(word):
             "solutions": solutions
         }
         
-        return create_success_response(word_data)
+        return create_success_response(word_data, meta)
         
     except Exception as e:
         response.status = 500
         return create_error_response("PROCESSING_ERROR", "Error processing word combinations")
 
-def find_combinations(word, path="", symbols=None):
+def find_combinations(word, path="", symbols=None, reverse_symbols=False):
     """
     Recursive function to find valid combinations of symbols forming the word.
     Returns a list of tuples, where each tuple contains:
@@ -314,17 +291,45 @@ def find_combinations(word, path="", symbols=None):
     results = []
     seen = set()  # Track unique combinations to avoid duplicates
     
+    # Get the appropriate symbol set (normal or reversed)
+    available_symbols = get_available_symbols(reverse_symbols)
+    
     # Try 1 or 2 character substrings of the word
     for i in range(1, min(3, len(word) + 1)):
-        # Get the next 1 or 2 letters, capitalized
-        prefix = word[:i].capitalize()
-        if prefix in ELEMENT_SYMBOLS:  # Check if it's a valid element symbol
-            sub_results = find_combinations(
-                word[i:], path + prefix, symbols + [prefix])
-            for result in sub_results:
-                if result not in seen:
-                    seen.add(result)
-                    results.append(result)
+        # Get the next 1 or 2 letters
+        substring = word[:i]
+        
+        # For reversed symbols, we need to try different cases to match symbols like "eH"
+        if reverse_symbols:
+            # Try all possible case variations for the substring
+            case_variations = [
+                substring,  # as-is: "eh"
+                substring.capitalize(),  # capitalize: "Eh" 
+                substring.upper(),  # upper: "EH"
+            ]
+            
+            # For 2-letter substrings, also try with second letter capitalized
+            if len(substring) == 2:
+                case_variations.append(substring[0].lower() + substring[1].upper())  # "eH"
+            
+            for variation in case_variations:
+                if variation in available_symbols:
+                    sub_results = find_combinations(
+                        word[i:], path + variation, symbols + [variation], reverse_symbols)
+                    for result in sub_results:
+                        if result not in seen:
+                            seen.add(result)
+                            results.append(result)
+        else:
+            # Standard behavior: capitalize the prefix
+            prefix = substring.capitalize()
+            if prefix in available_symbols:
+                sub_results = find_combinations(
+                    word[i:], path + prefix, symbols + [prefix], reverse_symbols)
+                for result in sub_results:
+                    if result not in seen:
+                        seen.add(result)
+                        results.append(result)
 
     return results
 
