@@ -1,0 +1,777 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Element Words API",
+    "description": "A RESTful API for creating words from chemical element symbols. \n\nThe primary function is to take a word and return all possible ways to spell it using chemical element symbols (H, He, Li, Be, etc.).\n\n## Features\n- Convert words into chemical element symbol combinations\n- Support for reversed two-letter element symbols (optional)\n- Reference data for all chemical elements\n- Standardized response formats with proper error handling\n- CORS support for web applications\n\n## Primary Use Case\nInput a word like \"hero\" and get back combinations like H-Er-O (Hydrogen-Erbium-Oxygen).\n",
+    "version": "v1",
+    "contact": {
+      "name": "Element Words API",
+      "url": "https://github.com/chriswilson1982/element-words"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://element-words.herokuapp.com",
+      "description": "Production server"
+    },
+    {
+      "url": "http://localhost:8080",
+      "description": "Development server"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "API Documentation",
+        "description": "Returns HTML documentation for the API",
+        "operationId": "getApiDocumentation",
+        "responses": {
+          "200": {
+            "description": "HTML documentation page",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Documentation"
+        ]
+      }
+    },
+    "/api": {
+      "get": {
+        "summary": "API Documentation (Alternative)",
+        "description": "Returns HTML documentation for the API",
+        "operationId": "getApiDocumentationAlt",
+        "responses": {
+          "200": {
+            "description": "HTML documentation page",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Documentation"
+        ]
+      }
+    },
+    "/api/v1/elements": {
+      "get": {
+        "summary": "Get All Chemical Elements",
+        "description": "Returns a list of all chemical elements with their symbols, names, and atomic numbers",
+        "operationId": "getAllElements",
+        "responses": {
+          "200": {
+            "description": "List of all chemical elements",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Element"
+                          }
+                        },
+                        "meta": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/ResponseMeta"
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "total_count": {
+                                  "type": "integer",
+                                  "description": "Total number of elements",
+                                  "example": 118
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Successful response",
+                    "value": {
+                      "data": [
+                        {
+                          "symbol": "H",
+                          "name": "Hydrogen",
+                          "atomic_number": 1
+                        },
+                        {
+                          "symbol": "He",
+                          "name": "Helium",
+                          "atomic_number": 2
+                        },
+                        {
+                          "symbol": "Li",
+                          "name": "Lithium",
+                          "atomic_number": 3
+                        }
+                      ],
+                      "meta": {
+                        "timestamp": "2023-01-01T00:00:00Z",
+                        "version": "v1",
+                        "total_count": 118
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "tags": [
+          "Elements"
+        ]
+      }
+    },
+    "/api/v1/elements/{symbol}": {
+      "get": {
+        "summary": "Get Element by Symbol",
+        "description": "Returns details for a specific chemical element by its symbol",
+        "operationId": "getElementById",
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "path",
+            "required": true,
+            "description": "Chemical element symbol (e.g., H, He, Li)",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Z][a-z]?$",
+              "example": "H"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Element details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Element"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "examples": {
+                  "hydrogen": {
+                    "summary": "Hydrogen element",
+                    "value": {
+                      "data": {
+                        "symbol": "H",
+                        "name": "Hydrogen",
+                        "atomic_number": 1
+                      },
+                      "meta": {
+                        "timestamp": "2023-01-01T00:00:00Z",
+                        "version": "v1"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/ElementNotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "tags": [
+          "Elements"
+        ]
+      }
+    },
+    "/api/v1/words/{word}/combinations": {
+      "get": {
+        "summary": "Find Element Combinations for Word",
+        "description": "**Primary API endpoint:** Finds all possible chemical element symbol combinations that can spell the given word.\n\nThe word is cleaned to contain only alphabetic characters and combinations are found using element symbols.\nSolutions are sorted by the number of elements used (fewer elements first).\n",
+        "operationId": "getWordCombinations",
+        "parameters": [
+          {
+            "name": "word",
+            "in": "path",
+            "required": true,
+            "description": "The word to analyze for element combinations. Will be cleaned to remove non-alphabetic characters.\nMaximum length: 50 characters.\n",
+            "schema": {
+              "type": "string",
+              "maxLength": 50,
+              "pattern": "^[a-zA-Z]+.*$",
+              "example": "hero"
+            }
+          },
+          {
+            "name": "allow_reversed_symbols",
+            "in": "query",
+            "required": false,
+            "description": "Allow reversed two-letter element symbols (e.g., He\u2192eH, Li\u2192iL).\nSingle-letter symbols remain unchanged.\n",
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "example": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Word combinations found successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/WordCombinations"
+                        },
+                        "meta": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/ResponseMeta"
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "reverse_symbols": {
+                                  "type": "boolean",
+                                  "description": "Whether reversed symbols were used"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                },
+                "examples": {
+                  "hero_standard": {
+                    "summary": "Standard combinations for \"hero\"",
+                    "value": {
+                      "data": {
+                        "input_word": "hero",
+                        "cleaned_word": "hero",
+                        "solutions_count": 1,
+                        "solutions": [
+                          {
+                            "representation": "HErO",
+                            "symbols": [
+                              "H",
+                              "Er",
+                              "O"
+                            ],
+                            "elements": [
+                              {
+                                "symbol": "H",
+                                "name": "Hydrogen",
+                                "atomic_number": 1
+                              },
+                              {
+                                "symbol": "Er",
+                                "name": "Erbium",
+                                "atomic_number": 68
+                              },
+                              {
+                                "symbol": "O",
+                                "name": "Oxygen",
+                                "atomic_number": 8
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "meta": {
+                        "timestamp": "2023-01-01T00:00:00Z",
+                        "version": "v1"
+                      }
+                    }
+                  },
+                  "hero_reversed": {
+                    "summary": "Combinations with reversed symbols",
+                    "value": {
+                      "data": {
+                        "input_word": "hero",
+                        "cleaned_word": "hero",
+                        "solutions_count": 2,
+                        "solutions": [
+                          {
+                            "representation": "HErO",
+                            "symbols": [
+                              "H",
+                              "Er",
+                              "O"
+                            ],
+                            "elements": [
+                              {
+                                "symbol": "H",
+                                "name": "Hydrogen",
+                                "atomic_number": 1
+                              },
+                              {
+                                "symbol": "Er",
+                                "name": "Erbium",
+                                "atomic_number": 68
+                              },
+                              {
+                                "symbol": "O",
+                                "name": "Oxygen",
+                                "atomic_number": 8
+                              }
+                            ]
+                          },
+                          {
+                            "representation": "HeRO",
+                            "symbols": [
+                              "He",
+                              "R",
+                              "O"
+                            ],
+                            "elements": [
+                              {
+                                "symbol": "He",
+                                "name": "Helium",
+                                "atomic_number": 2
+                              },
+                              {
+                                "symbol": "R",
+                                "name": "Argon",
+                                "atomic_number": 18
+                              },
+                              {
+                                "symbol": "O",
+                                "name": "Oxygen",
+                                "atomic_number": 8
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "meta": {
+                        "timestamp": "2023-01-01T00:00:00Z",
+                        "version": "v1",
+                        "reverse_symbols": true
+                      }
+                    }
+                  },
+                  "no_solutions": {
+                    "summary": "No solutions found",
+                    "value": {
+                      "data": {
+                        "input_word": "xyz",
+                        "cleaned_word": "xyz",
+                        "solutions_count": 0,
+                        "solutions": []
+                      },
+                      "meta": {
+                        "timestamp": "2023-01-01T00:00:00Z",
+                        "version": "v1"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ProcessingError"
+          }
+        },
+        "tags": [
+          "Words"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Element": {
+        "type": "object",
+        "required": [
+          "symbol",
+          "name",
+          "atomic_number"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "Chemical element symbol",
+            "pattern": "^[A-Z][a-z]?$",
+            "example": "H"
+          },
+          "name": {
+            "type": "string",
+            "description": "Full name of the element",
+            "example": "Hydrogen"
+          },
+          "atomic_number": {
+            "type": "integer",
+            "description": "Atomic number of the element",
+            "minimum": 1,
+            "maximum": 118,
+            "example": 1
+          }
+        }
+      },
+      "WordCombinations": {
+        "type": "object",
+        "required": [
+          "input_word",
+          "cleaned_word",
+          "solutions_count",
+          "solutions"
+        ],
+        "properties": {
+          "input_word": {
+            "type": "string",
+            "description": "Original word as provided by user (lowercase)",
+            "example": "hero"
+          },
+          "cleaned_word": {
+            "type": "string",
+            "description": "Word after removing non-alphabetic characters (lowercase)",
+            "example": "hero"
+          },
+          "solutions_count": {
+            "type": "integer",
+            "description": "Number of valid element combinations found",
+            "minimum": 0,
+            "example": 1
+          },
+          "solutions": {
+            "type": "array",
+            "description": "Array of valid element combinations (sorted by element count)",
+            "items": {
+              "$ref": "#/components/schemas/Solution"
+            }
+          }
+        }
+      },
+      "Solution": {
+        "type": "object",
+        "required": [
+          "representation",
+          "symbols",
+          "elements"
+        ],
+        "properties": {
+          "representation": {
+            "type": "string",
+            "description": "Visual representation of the solution with proper capitalization",
+            "example": "HErO"
+          },
+          "symbols": {
+            "type": "array",
+            "description": "Array of element symbols used in this solution",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z][a-z]?$"
+            },
+            "example": [
+              "H",
+              "Er",
+              "O"
+            ]
+          },
+          "elements": {
+            "type": "array",
+            "description": "Detailed information about each element used",
+            "items": {
+              "$ref": "#/components/schemas/Element"
+            }
+          }
+        }
+      },
+      "SuccessResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "description": "The actual response data"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          }
+        }
+      },
+      "ResponseMeta": {
+        "type": "object",
+        "required": [
+          "timestamp",
+          "version"
+        ],
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp of the response",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "version": {
+            "type": "string",
+            "description": "API version",
+            "example": "v1"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message",
+              "timestamp"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Machine-readable error code",
+                "enum": [
+                  "MISSING_WORD",
+                  "INVALID_WORD",
+                  "WORD_TOO_LONG",
+                  "PROCESSING_ERROR",
+                  "MISSING_SYMBOL",
+                  "ELEMENT_NOT_FOUND",
+                  "NOT_FOUND",
+                  "METHOD_NOT_ALLOWED",
+                  "INTERNAL_ERROR"
+                ],
+                "example": "MISSING_WORD"
+              },
+              "message": {
+                "type": "string",
+                "description": "Human-readable error message",
+                "example": "Word parameter is required"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 timestamp when the error occurred",
+                "example": "2023-01-01T00:00:00Z"
+              },
+              "details": {
+                "type": "object",
+                "description": "Additional error details (optional)"
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request - invalid input parameters",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "examples": {
+              "missing_word": {
+                "summary": "Missing word parameter",
+                "value": {
+                  "error": {
+                    "code": "MISSING_WORD",
+                    "message": "Word parameter is required",
+                    "timestamp": "2023-01-01T00:00:00Z"
+                  }
+                }
+              },
+              "invalid_word": {
+                "summary": "Invalid word format",
+                "value": {
+                  "error": {
+                    "code": "INVALID_WORD",
+                    "message": "Word must contain at least one alphabetic character",
+                    "timestamp": "2023-01-01T00:00:00Z"
+                  }
+                }
+              },
+              "word_too_long": {
+                "summary": "Word exceeds maximum length",
+                "value": {
+                  "error": {
+                    "code": "WORD_TOO_LONG",
+                    "message": "Word length exceeds maximum limit of 50 characters",
+                    "timestamp": "2023-01-01T00:00:00Z"
+                  }
+                }
+              },
+              "missing_symbol": {
+                "summary": "Missing element symbol",
+                "value": {
+                  "error": {
+                    "code": "MISSING_SYMBOL",
+                    "message": "Element symbol is required",
+                    "timestamp": "2023-01-01T00:00:00Z"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ElementNotFound": {
+        "description": "Element not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "error": {
+                "code": "ELEMENT_NOT_FOUND",
+                "message": "Element with symbol 'Xx' not found",
+                "timestamp": "2023-01-01T00:00:00Z"
+              }
+            }
+          }
+        }
+      },
+      "ProcessingError": {
+        "description": "Error processing request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "error": {
+                "code": "PROCESSING_ERROR",
+                "message": "Error processing word combinations",
+                "timestamp": "2023-01-01T00:00:00Z"
+              }
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "error": {
+                "code": "INTERNAL_ERROR",
+                "message": "An internal server error occurred",
+                "timestamp": "2023-01-01T00:00:00Z"
+              }
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "WordPath": {
+        "name": "word",
+        "in": "path",
+        "required": true,
+        "description": "Word to analyze for element combinations",
+        "schema": {
+          "type": "string",
+          "maxLength": 50,
+          "pattern": "^[a-zA-Z]+.*$"
+        }
+      },
+      "ElementSymbolPath": {
+        "name": "symbol",
+        "in": "path",
+        "required": true,
+        "description": "Chemical element symbol",
+        "schema": {
+          "type": "string",
+          "pattern": "^[A-Z][a-z]?$"
+        }
+      },
+      "AllowReversedSymbols": {
+        "name": "allow_reversed_symbols",
+        "in": "query",
+        "required": false,
+        "description": "Allow reversed two-letter element symbols",
+        "schema": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Words",
+      "description": "**Primary functionality:** Convert words into chemical element symbol combinations.\nThis is the main purpose of the API.\n"
+    },
+    {
+      "name": "Elements",
+      "description": "Reference data for chemical elements (supporting functionality)"
+    },
+    {
+      "name": "Documentation",
+      "description": "API documentation and help"
+    }
+  ],
+  "externalDocs": {
+    "description": "GitHub Repository",
+    "url": "https://github.com/chriswilson1982/element-words"
+  }
+}
