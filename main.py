@@ -44,39 +44,64 @@ def symbols():
 
 @app.get('/word/<word>')
 def process_word(word):
-    combinations = find_combinations(word)
     response.content_type = "application/json; charset=UTF8"
+    
+    # Input validation
+    if not word:
+        response.status = 400
+        return {"error": "Word parameter is required"}
+    
+    # Sanitize input: remove non-alphabetic characters and limit length
+    clean_word = ''.join(c for c in word if c.isalpha())
+    if not clean_word:
+        response.status = 400
+        return {"error": "Word must contain at least one alphabetic character"}
+    
+    # Limit word length to prevent DoS attacks
+    if len(clean_word) > 50:
+        response.status = 400
+        return {"error": "Word length exceeds maximum limit of 50 characters"}
+    
+    combinations = find_combinations(clean_word)
     if combinations:
         count = len(combinations)
         sorted_results = sorted(combinations, key=lambda n: len(n[1]))
         return {
-            "word" : word.lower(),
+            "word" : clean_word.lower(),
             "solutions" : list(map(lambda result: {"text": result[0], "symbols": result[1], "elements": [ELEMENTS[x] for x in result[1]]}, sorted_results))
         }
     else:
         return {
-            "word" : word.lower(),
+            "word" : clean_word.lower(),
             "solutions" : []
         }
 
-def find_combinations(word, path="", symbols=[]):
+def find_combinations(word, path="", symbols=None):
     """
     Recursive function to find valid combinations of symbols forming the word.
     Returns a list of tuples, where each tuple contains:
       - A string representation of the solution.
       - A list of element symbols used to form the solution.
     """
+    if symbols is None:
+        symbols = []
+    
     if not word:  # Base case: if the word is empty, return the path and symbols
         return [(path, tuple(symbols))]
 
-    results = set()
+    results = []
+    seen = set()  # Track unique combinations to avoid duplicates
     # Try 1 or 2 character substrings of the word
     for i in range(1, 3):
         # Get the next 1 or 2 letters, capitalized
         prefix = word[:i].capitalize()
         if prefix in ELEMENT_SYMBOLS:  # Check if it's a valid element symbol
-            results.update(find_combinations(
-                word[i:], path + prefix, symbols + [prefix]))
+            sub_results = find_combinations(
+                word[i:], path + prefix, symbols + [prefix])
+            for result in sub_results:
+                if result not in seen:
+                    seen.add(result)
+                    results.append(result)
 
     return results
 
