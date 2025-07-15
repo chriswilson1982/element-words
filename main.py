@@ -98,16 +98,15 @@ def api_documentation():
         
         <h2>Endpoints</h2>
         
-        <div class="endpoint">
-            <p><span class="method">GET</span> <span class="url">/api/v1/elements</span></p>
-            <p>Get all chemical elements with pagination support</p>
-            <div class="params">
-                <strong>Query Parameters:</strong><br>
-                • <code>page</code> (optional): Page number (default: 1)<br>
-                • <code>limit</code> (optional): Items per page (default: 20, max: 100)<br>
-                • <code>symbol</code> (optional): Filter by element symbol
-            </div>
-        </div>
+                 <div class="endpoint">
+             <p><span class="method">GET</span> <span class="url">/api/v1/elements</span></p>
+             <p>Get all chemical elements with pagination support</p>
+             <div class="params">
+                 <strong>Query Parameters:</strong><br>
+                 • <code>page</code> (optional): Page number (default: 1)<br>
+                 • <code>limit</code> (optional): Items per page (default: 20, max: 100)
+             </div>
+         </div>
         
         <div class="endpoint">
             <p><span class="method">GET</span> <span class="url">/api/v1/elements/{symbol}</span></p>
@@ -168,7 +167,6 @@ def get_elements():
         # Parse query parameters
         page = int(request.query.get('page', 1))
         limit = int(request.query.get('limit', DEFAULT_PAGE_SIZE))
-        symbol_filter = request.query.get('symbol', '').strip().upper()
         
         # Validation
         if page < 1:
@@ -182,12 +180,11 @@ def get_elements():
         # Prepare element data
         elements_data = []
         for symbol, name in ELEMENTS.items():
-            if not symbol_filter or symbol == symbol_filter:
-                elements_data.append({
-                    "symbol": symbol,
-                    "name": name,
-                    "atomic_number": ELEMENT_SYMBOLS.index(symbol) + 1
-                })
+            elements_data.append({
+                "symbol": symbol,
+                "name": name,
+                "atomic_number": ELEMENT_SYMBOLS.index(symbol) + 1
+            })
         
         # Apply pagination
         total_count = len(elements_data)
@@ -210,9 +207,6 @@ def get_elements():
                 "has_prev": has_prev
             }
         }
-        
-        if symbol_filter:
-            meta["filter"] = {"symbol": symbol_filter}
         
         return create_success_response(paginated_elements, meta)
         

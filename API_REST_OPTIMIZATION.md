@@ -155,10 +155,7 @@ GET /api/v1/elements/H
 GET /api/v1/words/hello/combinations
 ```
 
-### Filter Elements
-```bash
-GET /api/v1/elements?symbol=H
-```
+
 
 ## Security Improvements
 
@@ -170,9 +167,8 @@ GET /api/v1/elements?symbol=H
 ## Performance Considerations
 
 1. **Pagination**: Prevents large data transfers
-2. **Efficient Filtering**: Symbol-based filtering for elements
-3. **Optimized Sorting**: Solutions sorted by element count
-4. **Caching Headers**: Appropriate content-type headers set
+2. **Optimized Sorting**: Solutions sorted by element count
+3. **Caching Headers**: Appropriate content-type headers set
 
 ## Backward Compatibility
 
