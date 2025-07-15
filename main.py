@@ -183,7 +183,7 @@ def get_element(symbol):
     """Get a specific element by symbol"""
     set_json_headers()
     
-    symbol = symbol.strip().upper()
+    symbol = symbol.strip().capitalize()
     
     if not symbol:
         response.status = 400
