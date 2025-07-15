@@ -117,7 +117,7 @@ def api_documentation():
                 <strong>Path Parameters:</strong><br>
                 • <code>word</code>: The word to analyze (max 50 characters, alphabetic only)<br><br>
                 <strong>Query Parameters:</strong><br>
-                • <code>reverse</code> (optional): Set to "true" to reverse two-letter element symbols (He→eH, Li→iL, etc.)
+                • <code>allow_reversed</code> (optional): Set to "true" to allow reversed two-letter element symbols (He→eH, Li→iL, etc.)
             </div>
         </div>
         
@@ -134,7 +134,7 @@ def api_documentation():
         <h2>Examples</h2>
         <ul>
             <li><code>GET /api/v1/words/hero/combinations</code> → H-Er-O</li>
-            <li><code>GET /api/v1/words/hero/combinations?reverse=true</code> → Use reversed symbols (eH, rE, O)</li>
+            <li><code>GET /api/v1/words/hero/combinations?allow_reversed=true</code> → Use reversed symbols (eH, rE, O)</li>
         </ul>
         
         <h2>Response Format</h2>
@@ -213,7 +213,7 @@ def get_word_combinations(word):
         return create_error_response("MISSING_WORD", "Word parameter is required")
     
     # Check for reverse symbols option
-    reverse_symbols = request.query.get('reverse', '').lower() == 'true'
+    reverse_symbols = request.query.get('allow_reversed', '').lower() == 'true'
     
     # Sanitize input: remove non-alphabetic characters
     clean_word = ''.join(c for c in word if c.isalpha())

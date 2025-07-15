@@ -55,7 +55,7 @@ This API's primary function is to take a word and return all possible ways to sp
 
 ### 5. New Feature: Reversed Symbols
 
-The API now supports a `reverse=true` query parameter that reverses all two-letter element symbols:
+The API now supports an `allow_reversed=true` query parameter that allows reversed two-letter element symbols:
 - `He` → `eH`
 - `Li` → `iL` 
 - `Ne` → `eN`
@@ -63,7 +63,7 @@ The API now supports a `reverse=true` query parameter that reverses all two-lett
 
 **Example:**
 ```bash
-GET /api/v1/words/hello/combinations?reverse=true
+GET /api/v1/words/hello/combinations?allow_reversed=true
 ```
 
 ### 6. Comprehensive Error Handling
@@ -92,7 +92,7 @@ GET /api/v1/words/hero/combinations
 # Returns: H-Er-O (Hydrogen-Erbium-Oxygen)
 
 # With reversed symbols
-GET /api/v1/words/hero/combinations?reverse=true
+GET /api/v1/words/hero/combinations?allow_reversed=true
 # Uses: H, rE (reversed Er), O for different possibilities
 ```
 
