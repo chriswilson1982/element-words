@@ -283,9 +283,7 @@ def get_word_combinations(word):
             meta["allow_reversed_symbols"] = True
         
         word_data = {
-            "input_word": word.lower(),
-            "cleaned_word": clean_word.lower(),
-            "solutions_count": len(solutions),
+            "input_word": clean_word.lower(),
             "solutions": solutions
         }
         
