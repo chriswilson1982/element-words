@@ -15,7 +15,7 @@ The Element Words API converts words into chemical element symbol combinations. 
 
 ### Key Features Documented
 
-1. **Primary Endpoint**: `/api/v1/words/{word}/combinations`
+1. **Primary Endpoint**: `/api/v1/words/{word}`
    - Main functionality for finding element combinations
    - Optional support for reversed two-letter symbols
    - Comprehensive examples and error handling
@@ -88,10 +88,10 @@ curl "https://elements.chriswilson.app/api/v1/elements"
 curl "https://elements.chriswilson.app/api/v1/elements/H"
 
 # Find word combinations (main feature)
-curl "https://elements.chriswilson.app/api/v1/words/hero/combinations"
+curl "https://elements.chriswilson.app/api/v1/words/hero"
 
 # Find combinations with reversed symbols
-curl "https://elements.chriswilson.app/api/v1/words/hero/combinations?allow_reversed_symbols=true"
+curl "https://elements.chriswilson.app/api/v1/words/hero?allow_reversed_symbols=true"
 ```
 
 ## Validation

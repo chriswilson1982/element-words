@@ -226,7 +226,7 @@
         ]
       }
     },
-    "/api/v1/words/{word}/combinations": {
+    "/api/v1/words/{word}": {
       "get": {
         "summary": "Find Element Combinations for Word",
         "description": "**Primary API endpoint:** Finds all possible chemical element symbol combinations that can spell the given word.\n\nThe word is cleaned to contain only alphabetic characters and combinations are found using element symbols.\nSolutions are sorted by the number of elements used (fewer elements first).\n",
