@@ -49,7 +49,7 @@ This API's primary function is to take a word and return all possible ways to sp
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/v1/words/{word}/combinations` | **Primary:** Find element combinations for a word |
+| GET | `/api/v1/words/{word}` | **Primary:** Find element combinations for a word |
 | GET | `/api/v1/elements` | Get all chemical elements (reference data) |
 | GET | `/api/v1/elements/{symbol}` | Get specific element |
 
@@ -63,7 +63,7 @@ The API now supports an `allow_reversed_symbols=true` query parameter that allow
 
 **Example:**
 ```bash
-GET /api/v1/words/hello/combinations?allow_reversed_symbols=true
+GET /api/v1/words/hello?allow_reversed_symbols=true
 ```
 
 ### 6. Comprehensive Error Handling
@@ -88,11 +88,11 @@ GET /api/v1/words/hello/combinations?allow_reversed_symbols=true
 ### Primary Use Case: Word Combinations
 ```bash
 # Standard combinations
-GET /api/v1/words/hero/combinations
+GET /api/v1/words/hero
 # Returns: H-Er-O (Hydrogen-Erbium-Oxygen)
 
 # With reversed symbols
-GET /api/v1/words/hero/combinations?allow_reversed_symbols=true
+GET /api/v1/words/hero?allow_reversed_symbols=true
 # Uses: H, rE (reversed Er), O for different possibilities
 ```
 
@@ -160,7 +160,7 @@ GET /api/v1/elements/H
 
 ## Migration from Previous Version
 
-- **Old**: `/word/<word>` → **New**: `/api/v1/words/<word>/combinations`
+- **Old**: `/word/<word>` → **New**: `/api/v1/words/<word>`
 - **Old**: `/elements` → **New**: `/api/v1/elements`
 - **Removed**: `/symbols` (symbols included in elements data)
 

@@ -157,7 +157,7 @@ paths:
       tags:
         - Elements
 
-  /api/v1/words/{word}/combinations:
+  /api/v1/words/{word}:
     get:
       summary: Find Element Combinations for Word
       description: |

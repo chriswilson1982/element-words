@@ -113,7 +113,7 @@ def api_documentation():
         <h2>Endpoints</h2>
         
         <div class="endpoint">
-            <p><span class="method">GET</span> <span class="url">/api/v1/words/{word}/combinations</span></p>
+                            <p><span class="method">GET</span> <span class="url">/api/v1/words/{word}</span></p>
             <p><strong>Primary endpoint:</strong> Find all possible element combinations for a word</p>
             <div class="params">
                 <strong>Path Parameters:</strong><br>
@@ -150,8 +150,8 @@ def api_documentation():
         
         <h2>Examples</h2>
         <ul>
-            <li><code>GET /api/v1/words/hero/combinations</code> → H-Er-O</li>
-            <li><code>GET /api/v1/words/hero/combinations?allow_reversed_symbols=true</code> → Use both normal and reversed symbols (He+eH, etc.)</li>
+                            <li><code>GET /api/v1/words/hero</code> → H-Er-O</li>
+                <li><code>GET /api/v1/words/hero?allow_reversed_symbols=true</code> → Use both normal and reversed symbols (He+eH, etc.)</li>
         </ul>
         
         <h2>Response Format</h2>
@@ -219,7 +219,7 @@ def get_element(symbol):
     return create_success_response(element_data)
 
 # Find word combinations - the main API purpose
-@app.get('/api/v1/words/<word>/combinations')
+@app.get('/api/v1/words/<word>')
 def get_word_combinations(word):
     """Find all possible element combinations for a word"""
     set_json_headers()
