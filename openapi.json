@@ -280,9 +280,9 @@
                             {
                               "type": "object",
                               "properties": {
-                                "reverse_symbols": {
+                                "allow_reversed_symbols": {
                                   "type": "boolean",
-                                  "description": "Whether both normal and reversed symbols were used"
+                                  "description": "Whether reversed symbols were allowed in this request"
                                 }
                               }
                             }
@@ -298,8 +298,6 @@
                     "value": {
                       "data": {
                         "input_word": "hero",
-                        "cleaned_word": "hero",
-                        "solutions_count": 1,
                         "solutions": [
                           {
                             "representation": "HErO",
@@ -312,17 +310,20 @@
                               {
                                 "symbol": "H",
                                 "name": "Hydrogen",
-                                "atomic_number": 1
+                                "atomic_number": 1,
+                                "reversed": false
                               },
                               {
                                 "symbol": "Er",
                                 "name": "Erbium",
-                                "atomic_number": 68
+                                "atomic_number": 68,
+                                "reversed": false
                               },
                               {
                                 "symbol": "O",
                                 "name": "Oxygen",
-                                "atomic_number": 8
+                                "atomic_number": 8,
+                                "reversed": false
                               }
                             ]
                           }
@@ -339,8 +340,6 @@
                     "value": {
                       "data": {
                         "input_word": "hero",
-                        "cleaned_word": "hero",
-                        "solutions_count": 2,
                         "solutions": [
                           {
                             "representation": "HErO",
@@ -353,17 +352,20 @@
                               {
                                 "symbol": "H",
                                 "name": "Hydrogen",
-                                "atomic_number": 1
+                                "atomic_number": 1,
+                                "reversed": false
                               },
                               {
                                 "symbol": "Er",
                                 "name": "Erbium",
-                                "atomic_number": 68
+                                "atomic_number": 68,
+                                "reversed": false
                               },
                               {
                                 "symbol": "O",
                                 "name": "Oxygen",
-                                "atomic_number": 8
+                                "atomic_number": 8,
+                                "reversed": false
                               }
                             ]
                           },
@@ -378,17 +380,20 @@
                               {
                                 "symbol": "He",
                                 "name": "Helium",
-                                "atomic_number": 2
+                                "atomic_number": 2,
+                                "reversed": false
                               },
                               {
-                                "symbol": "R",
+                                "symbol": "Ar",
                                 "name": "Argon",
-                                "atomic_number": 18
+                                "atomic_number": 18,
+                                "reversed": true
                               },
                               {
                                 "symbol": "O",
                                 "name": "Oxygen",
-                                "atomic_number": 8
+                                "atomic_number": 8,
+                                "reversed": false
                               }
                             ]
                           }
@@ -397,7 +402,7 @@
                       "meta": {
                         "timestamp": "2023-01-01T00:00:00Z",
                         "version": "v1",
-                        "reverse_symbols": true
+                        "allow_reversed_symbols": true
                       }
                     }
                   },
@@ -406,8 +411,6 @@
                     "value": {
                       "data": {
                         "input_word": "xyz",
-                        "cleaned_word": "xyz",
-                        "solutions_count": 0,
                         "solutions": []
                       },
                       "meta": {
@@ -514,7 +517,8 @@
         "required": [
           "symbol",
           "name",
-          "atomic_number"
+          "atomic_number",
+          "reversed"
         ],
         "properties": {
           "symbol": {
@@ -534,6 +538,11 @@
             "minimum": 1,
             "maximum": 118,
             "example": 1
+          },
+          "reversed": {
+            "type": "boolean",
+            "description": "Whether this element symbol was used in reversed form",
+            "example": false
           }
         }
       },
@@ -541,26 +550,13 @@
         "type": "object",
         "required": [
           "input_word",
-          "cleaned_word",
-          "solutions_count",
           "solutions"
         ],
         "properties": {
           "input_word": {
             "type": "string",
-            "description": "Original word as provided by user (lowercase)",
+            "description": "Word after cleaning (removing non-alphabetic characters, lowercase)",
             "example": "hero"
-          },
-          "cleaned_word": {
-            "type": "string",
-            "description": "Word after removing non-alphabetic characters (lowercase)",
-            "example": "hero"
-          },
-          "solutions_count": {
-            "type": "integer",
-            "description": "Number of valid element combinations found",
-            "minimum": 0,
-            "example": 1
           },
           "solutions": {
             "type": "array",
@@ -638,6 +634,11 @@
             "type": "string",
             "description": "API version",
             "example": "v1"
+          },
+          "allow_reversed_symbols": {
+            "type": "boolean",
+            "description": "Whether reversed symbols were allowed in this request (only present when true)",
+            "example": true
           }
         }
       },

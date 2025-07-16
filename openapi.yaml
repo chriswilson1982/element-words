@@ -205,17 +205,15 @@ paths:
                           - $ref: '#/components/schemas/ResponseMeta'
                           - type: object
                             properties:
-                              reverse_symbols:
+                              allow_reversed_symbols:
                                 type: boolean
-                                description: Whether both normal and reversed symbols were used
+                                description: Whether reversed symbols were allowed in this request
               examples:
                 hero_standard:
                   summary: Standard combinations for "hero"
                   value:
                     data:
                       input_word: "hero"
-                      cleaned_word: "hero"
-                      solutions_count: 1
                       solutions:
                         - representation: "HErO"
                           symbols: ["H", "Er", "O"]
@@ -223,12 +221,15 @@ paths:
                             - symbol: "H"
                               name: "Hydrogen"
                               atomic_number: 1
+                              reversed: false
                             - symbol: "Er"
                               name: "Erbium"
                               atomic_number: 68
+                              reversed: false
                             - symbol: "O"
                               name: "Oxygen"
                               atomic_number: 8
+                              reversed: false
                     meta:
                       timestamp: "2023-01-01T00:00:00Z"
                       version: "v1"
@@ -237,8 +238,6 @@ paths:
                   value:
                     data:
                       input_word: "hero"
-                      cleaned_word: "hero"
-                      solutions_count: 2
                       solutions:
                         - representation: "HErO"
                           symbols: ["H", "Er", "O"]
@@ -246,35 +245,39 @@ paths:
                             - symbol: "H"
                               name: "Hydrogen"
                               atomic_number: 1
+                              reversed: false
                             - symbol: "Er"
                               name: "Erbium"
                               atomic_number: 68
+                              reversed: false
                             - symbol: "O"
                               name: "Oxygen"
                               atomic_number: 8
+                              reversed: false
                         - representation: "HeRO"
                           symbols: ["He", "R", "O"]
                           elements:
                             - symbol: "He"
                               name: "Helium"
                               atomic_number: 2
-                            - symbol: "R"
+                              reversed: false
+                            - symbol: "Ar"
                               name: "Argon"
                               atomic_number: 18
+                              reversed: true
                             - symbol: "O"
                               name: "Oxygen"
                               atomic_number: 8
+                              reversed: false
                     meta:
                       timestamp: "2023-01-01T00:00:00Z"
                       version: "v1"
-                      reverse_symbols: true
+                      allow_reversed_symbols: true
                 no_solutions:
                   summary: No solutions found
                   value:
                     data:
                       input_word: "xyz"
-                      cleaned_word: "xyz"
-                      solutions_count: 0
                       solutions: []
                     meta:
                       timestamp: "2023-01-01T00:00:00Z"
@@ -345,6 +348,7 @@ components:
         - symbol
         - name
         - atomic_number
+        - reversed
       properties:
         symbol:
           type: string
@@ -361,28 +365,21 @@ components:
           minimum: 1
           maximum: 118
           example: 1
+        reversed:
+          type: boolean
+          description: Whether this element symbol was used in reversed form
+          example: false
 
     WordCombinations:
       type: object
       required:
         - input_word
-        - cleaned_word
-        - solutions_count
         - solutions
       properties:
         input_word:
           type: string
-          description: Original word as provided by user (lowercase)
+          description: Word after cleaning (removing non-alphabetic characters, lowercase)
           example: "hero"
-        cleaned_word:
-          type: string
-          description: Word after removing non-alphabetic characters (lowercase)
-          example: "hero"
-        solutions_count:
-          type: integer
-          description: Number of valid element combinations found
-          minimum: 0
-          example: 1
         solutions:
           type: array
           description: Array of valid element combinations (sorted by element count)
@@ -439,6 +436,10 @@ components:
           type: string
           description: API version
           example: "v1"
+        allow_reversed_symbols:
+          type: boolean
+          description: Whether reversed symbols were allowed in this request (only present when true)
+          example: true
 
     ErrorResponse:
       type: object
