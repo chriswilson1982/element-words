@@ -218,6 +218,21 @@ def get_element(symbol):
     
     return create_success_response(element_data)
 
+# Health check endpoint
+@app.get('/api/v1/health')
+def health_check():
+    """Health check endpoint"""
+    set_json_headers()
+    
+    health_data = {
+        "status": "healthy",
+        "service": "Element Words API",
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "version": API_VERSION
+    }
+    
+    return create_success_response(health_data)
+
 # Find word combinations - the main API purpose
 @app.get('/api/v1/words/<word>')
 def get_word_combinations(word):
