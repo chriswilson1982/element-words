@@ -250,25 +250,28 @@ def get_word_combinations(word):
         solutions = []
         for text_repr, symbols_tuple in combinations:
             # Map symbols back to original (non-reversed) symbols for element data
-            original_symbols = []
+            # and track which symbols were reversed
+            elements_data = []
             for symbol in symbols_tuple:
+                is_reversed = False
                 if reverse_symbols and len(symbol) == 2:
-                    # Find the original symbol by checking reversed lookup
+                    # Check if this symbol is a reversed version
                     original_symbol = symbol[::-1] if symbol[::-1] in ELEMENTS else symbol
+                    is_reversed = (symbol[::-1] in ELEMENTS and symbol[::-1] != symbol)
                 else:
                     original_symbol = symbol
-                original_symbols.append(original_symbol)
+                
+                elements_data.append({
+                    "symbol": original_symbol,
+                    "name": ELEMENTS[original_symbol],
+                    "atomic_number": ELEMENT_SYMBOLS.index(original_symbol) + 1,
+                    "reversed": is_reversed
+                })
             
             solution = {
                 "representation": text_repr,
                 "symbols": list(symbols_tuple),
-                "elements": [
-                    {
-                        "symbol": orig_symbol,
-                        "name": ELEMENTS[orig_symbol],
-                        "atomic_number": ELEMENT_SYMBOLS.index(orig_symbol) + 1
-                    } for orig_symbol in original_symbols
-                ]
+                "elements": elements_data
             }
             solutions.append(solution)
         
@@ -277,12 +280,10 @@ def get_word_combinations(word):
         
         meta = {}
         if reverse_symbols:
-            meta["reverse_symbols"] = True
+            meta["allow_reversed_symbols"] = True
         
         word_data = {
-            "input_word": word.lower(),
-            "cleaned_word": clean_word.lower(),
-            "solutions_count": len(solutions),
+            "input_word": clean_word.lower(),
             "solutions": solutions
         }
         
