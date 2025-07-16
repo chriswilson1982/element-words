@@ -15,7 +15,7 @@
   },
   "servers": [
     {
-      "url": "https://element-words.herokuapp.com",
+      "url": "https://elements.chriswilson.app",
       "description": "Production server"
     },
     {

@@ -120,11 +120,11 @@ The API now serves the OpenAPI specification directly at these endpoints:
 ### Quick Access
 ```bash
 # View interactive documentation
-open https://element-words.herokuapp.com/api/v1/docs
+open https://elements.chriswilson.app/api/v1/docs
 
 # Download specification files
-curl https://element-words.herokuapp.com/api/v1/openapi.yaml -o spec.yaml
-curl https://element-words.herokuapp.com/api/v1/openapi.json -o spec.json
+curl https://elements.chriswilson.app/api/v1/openapi.yaml -o spec.yaml
+curl https://elements.chriswilson.app/api/v1/openapi.json -o spec.json
 ```
 
 ## Implementation Notes
