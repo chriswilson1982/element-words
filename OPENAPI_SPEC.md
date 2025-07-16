@@ -82,16 +82,16 @@ Based on the specification, here are example API calls:
 
 ```bash
 # Get all elements
-curl "https://element-words.herokuapp.com/api/v1/elements"
+curl "https://elements.chriswilson.app/api/v1/elements"
 
 # Get specific element
-curl "https://element-words.herokuapp.com/api/v1/elements/H"
+curl "https://elements.chriswilson.app/api/v1/elements/H"
 
 # Find word combinations (main feature)
-curl "https://element-words.herokuapp.com/api/v1/words/hero/combinations"
+curl "https://elements.chriswilson.app/api/v1/words/hero/combinations"
 
 # Find combinations with reversed symbols
-curl "https://element-words.herokuapp.com/api/v1/words/hero/combinations?allow_reversed_symbols=true"
+curl "https://elements.chriswilson.app/api/v1/words/hero/combinations?allow_reversed_symbols=true"
 ```
 
 ## Validation
@@ -106,7 +106,7 @@ The OpenAPI specification has been validated against:
 ## Server Information
 
 The specification includes both production and development server configurations:
-- **Production**: `https://element-words.herokuapp.com`
+- **Production**: `https://elements.chriswilson.app`
 - **Development**: `http://localhost:8080`
 
 ## OpenAPI Specification Endpoints ✨

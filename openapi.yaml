@@ -24,7 +24,7 @@ info:
     url: https://opensource.org/licenses/MIT
 
 servers:
-  - url: https://element-words.herokuapp.com
+  - url: https://elements.chriswilson.app
     description: Production server
   - url: http://localhost:8080
     description: Development server
