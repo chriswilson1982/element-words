@@ -182,7 +182,7 @@ paths:
           in: query
           required: false
           description: |
-            Allow reversed two-letter element symbols (e.g., He→eH, Li→iL).
+            Allow both normal and reversed two-letter element symbols (e.g., He+eH, Li+iL).
             Single-letter symbols remain unchanged.
           schema:
             type: boolean
@@ -207,7 +207,7 @@ paths:
                             properties:
                               reverse_symbols:
                                 type: boolean
-                                description: Whether reversed symbols were used
+                                description: Whether both normal and reversed symbols were used
               examples:
                 hero_standard:
                   summary: Standard combinations for "hero"
@@ -233,7 +233,7 @@ paths:
                       timestamp: "2023-01-01T00:00:00Z"
                       version: "v1"
                 hero_reversed:
-                  summary: Combinations with reversed symbols
+                  summary: Combinations with both normal and reversed symbols
                   value:
                     data:
                       input_word: "hero"

@@ -56,17 +56,18 @@ def set_json_headers():
     set_cors_headers()
 
 def get_available_symbols(reverse_symbols=False):
-    """Get list of available element symbols, optionally reversed"""
+    """Get list of available element symbols, optionally including reversed"""
     if not reverse_symbols:
         return ELEMENT_SYMBOLS
     
-    # Create list with reversed two-letter symbols
-    symbols = []
+    # Create list with both normal and reversed two-letter symbols
+    symbols = list(ELEMENT_SYMBOLS)  # Start with all normal symbols
     for symbol in ELEMENT_SYMBOLS:
         if len(symbol) == 2:
-            symbols.append(symbol[::-1])  # Reverse two-letter symbols
-        else:
-            symbols.append(symbol)  # Keep single-letter symbols as is
+            reversed_symbol = symbol[::-1]
+            # Only add if it's not the same as the original (prevents duplicates)
+            if reversed_symbol != symbol:
+                symbols.append(reversed_symbol)
     return symbols
 
 @app.hook('after_request')
@@ -118,7 +119,7 @@ def api_documentation():
                 <strong>Path Parameters:</strong><br>
                 • <code>word</code>: The word to analyze (max 50 characters, alphabetic only)<br><br>
                 <strong>Query Parameters:</strong><br>
-                • <code>allow_reversed_symbols</code> (optional): Set to "true" to allow reversed two-letter element symbols (He→eH, Li→iL, etc.)
+                • <code>allow_reversed_symbols</code> (optional): Set to "true" to allow both normal and reversed two-letter element symbols (He+eH, Li+iL, etc.)
             </div>
         </div>
         
@@ -150,7 +151,7 @@ def api_documentation():
         <h2>Examples</h2>
         <ul>
             <li><code>GET /api/v1/words/hero/combinations</code> → H-Er-O</li>
-            <li><code>GET /api/v1/words/hero/combinations?allow_reversed_symbols=true</code> → Use reversed symbols (eH, rE, O)</li>
+            <li><code>GET /api/v1/words/hero/combinations?allow_reversed_symbols=true</code> → Use both normal and reversed symbols (He+eH, etc.)</li>
         </ul>
         
         <h2>Response Format</h2>
