@@ -286,6 +286,57 @@ paths:
       tags:
         - Words
 
+  /api/v1/openapi.yaml:
+    get:
+      summary: Get OpenAPI Specification (YAML)
+      description: Returns the OpenAPI specification for this API in YAML format
+      operationId: getOpenAPIYaml
+      responses:
+        '200':
+          description: OpenAPI specification in YAML format
+          content:
+            application/x-yaml:
+              schema:
+                type: string
+                description: OpenAPI 3.0 specification document
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - Documentation
+
+  /api/v1/openapi.json:
+    get:
+      summary: Get OpenAPI Specification (JSON)
+      description: Returns the OpenAPI specification for this API in JSON format
+      operationId: getOpenAPIJson
+      responses:
+        '200':
+          description: OpenAPI specification in JSON format
+          content:
+            application/json:
+              schema:
+                type: object
+                description: OpenAPI 3.0 specification document
+        '404':
+          $ref: '#/components/responses/NotFound'
+      tags:
+        - Documentation
+
+  /api/v1/docs:
+    get:
+      summary: Interactive API Documentation
+      description: Returns Swagger UI for interactive API documentation and testing
+      operationId: getSwaggerUI
+      responses:
+        '200':
+          description: Interactive Swagger UI documentation page
+          content:
+            text/html:
+              schema:
+                type: string
+      tags:
+        - Documentation
+
 components:
   schemas:
     Element:
@@ -499,6 +550,18 @@ components:
             error:
               code: "INTERNAL_ERROR"
               message: "An internal server error occurred"
+              timestamp: "2023-01-01T00:00:00Z"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: "NOT_FOUND"
+              message: "The requested resource was not found"
               timestamp: "2023-01-01T00:00:00Z"
 
   parameters:
