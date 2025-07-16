@@ -248,7 +248,7 @@
             "name": "allow_reversed_symbols",
             "in": "query",
             "required": false,
-            "description": "Allow reversed two-letter element symbols (e.g., He\u2192eH, Li\u2192iL).\nSingle-letter symbols remain unchanged.\n",
+            "description": "Allow both normal and reversed two-letter element symbols (e.g., He+eH, Li+iL).\nSingle-letter symbols remain unchanged.\n",
             "schema": {
               "type": "boolean",
               "default": false,
@@ -282,7 +282,7 @@
                               "properties": {
                                 "reverse_symbols": {
                                   "type": "boolean",
-                                  "description": "Whether reversed symbols were used"
+                                  "description": "Whether both normal and reversed symbols were used"
                                 }
                               }
                             }
@@ -335,7 +335,7 @@
                     }
                   },
                   "hero_reversed": {
-                    "summary": "Combinations with reversed symbols",
+                    "summary": "Combinations with both normal and reversed symbols",
                     "value": {
                       "data": {
                         "input_word": "hero",
@@ -839,7 +839,7 @@
         "name": "allow_reversed_symbols",
         "in": "query",
         "required": false,
-        "description": "Allow reversed two-letter element symbols",
+        "description": "Allow both normal and reversed two-letter element symbols",
         "schema": {
           "type": "boolean",
           "default": false

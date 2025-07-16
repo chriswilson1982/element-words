@@ -55,10 +55,10 @@ This API's primary function is to take a word and return all possible ways to sp
 
 ### 5. New Feature: Reversed Symbols
 
-The API now supports an `allow_reversed_symbols=true` query parameter that allows reversed two-letter element symbols:
-- `He` → `eH`
-- `Li` → `iL` 
-- `Ne` → `eN`
+The API now supports an `allow_reversed_symbols=true` query parameter that allows both normal and reversed two-letter element symbols:
+- `He` is available as both `He` and `eH`
+- `Li` is available as both `Li` and `iL` 
+- `Ne` is available as both `Ne` and `eN`
 - Single letters (H, B, C, etc.) remain unchanged
 
 **Example:**
