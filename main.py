@@ -280,7 +280,7 @@ def get_word_combinations(word):
         
         meta = {}
         if reverse_symbols:
-            meta["reverse_symbols"] = True
+            meta["allow_reversed_symbols"] = True
         
         word_data = {
             "input_word": word.lower(),
