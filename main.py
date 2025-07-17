@@ -23,8 +23,11 @@ def create_error_response(code, message, details=None):
     error_response = {
         "error": {
             "code": code,
-            "message": message,
-            "timestamp": datetime.utcnow().isoformat() + "Z"
+            "message": message
+        },
+        "meta": {
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "version": API_VERSION
         }
     }
     if details:
@@ -158,7 +161,7 @@ def api_documentation():
         <pre>{
   "data": { ... },
   "meta": {
-    "timestamp": "2023-01-01T00:00:00Z",
+    "timestamp": "2025-07-01T00:00:00Z",
     "version": "v1"
   }
 }</pre>
@@ -167,8 +170,11 @@ def api_documentation():
         <pre>{
   "error": {
     "code": "ERROR_CODE",
-    "message": "Human readable message",
-    "timestamp": "2023-01-01T00:00:00Z"
+    "message": "Human readable message"
+  },
+  "meta": {
+    "timestamp": "2023-07-01T00:00:00Z",
+    "version": "v1"
   }
 }</pre>
         
@@ -227,13 +233,11 @@ def health_check():
     health_data = {
         "status": "healthy",
         "service": "Element Words API",
-        "timestamp": datetime.utcnow().isoformat() + "Z",
-        "version": API_VERSION
     }
     
     return create_success_response(health_data)
 
-# Find word combinations - the main API purpose
+# Find word combinations
 @app.get('/api/v1/words/<word>')
 def get_word_combinations(word):
     """Find all possible element combinations for a word"""
