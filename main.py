@@ -85,8 +85,455 @@ def handle_options(version=None, path=None):
     set_cors_headers()
     return {}
 
-# API Documentation endpoint
+# Web Application
 @app.get('/')
+def element_words_app():
+    """Element Words Web Application"""
+    response.content_type = "text/html; charset=UTF-8"
+    return """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Element Words</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+            
+            .container {
+                background: white;
+                border-radius: 20px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+                padding: 40px;
+                max-width: 800px;
+                width: 100%;
+            }
+            
+            h1 {
+                text-align: center;
+                color: #2d3748;
+                margin-bottom: 10px;
+                font-size: 2.5rem;
+                font-weight: 700;
+            }
+            
+            .subtitle {
+                text-align: center;
+                color: #718096;
+                margin-bottom: 40px;
+                font-size: 1.1rem;
+            }
+            
+            .input-section {
+                margin-bottom: 30px;
+            }
+            
+            .input-group {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 15px;
+                flex-wrap: wrap;
+            }
+            
+            #wordInput {
+                flex: 1;
+                min-width: 250px;
+                padding: 15px 20px;
+                border: 2px solid #e2e8f0;
+                border-radius: 12px;
+                font-size: 1.1rem;
+                transition: border-color 0.2s ease;
+            }
+            
+            #wordInput:focus {
+                outline: none;
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            }
+            
+            .btn {
+                padding: 15px 30px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                border-radius: 12px;
+                font-size: 1.1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+            
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            }
+            
+            .btn:active {
+                transform: translateY(0);
+            }
+            
+            .btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
+            }
+            
+            .checkbox-group {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                color: #4a5568;
+            }
+            
+            .checkbox-group input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                accent-color: #667eea;
+            }
+            
+            .loading {
+                text-align: center;
+                color: #718096;
+                margin: 20px 0;
+                font-size: 1.1rem;
+            }
+            
+            .error {
+                background: #fed7d7;
+                color: #c53030;
+                padding: 15px 20px;
+                border-radius: 12px;
+                margin: 20px 0;
+                border-left: 4px solid #c53030;
+            }
+            
+            .no-results {
+                text-align: center;
+                color: #718096;
+                margin: 30px 0;
+                font-size: 1.1rem;
+            }
+            
+            .results {
+                margin-top: 30px;
+            }
+            
+            .solution {
+                background: #f7fafc;
+                border-radius: 16px;
+                padding: 25px;
+                margin-bottom: 20px;
+                border-left: 4px solid #667eea;
+                transition: transform 0.2s ease;
+            }
+            
+            .solution:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            }
+            
+            .solution-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 15px;
+            }
+            
+            .solution-title {
+                font-size: 1.2rem;
+                font-weight: 600;
+                color: #2d3748;
+            }
+            
+            .element-count {
+                background: #667eea;
+                color: white;
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+            
+            .elements-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .element-tile {
+                background: white;
+                border: 2px solid #e2e8f0;
+                border-radius: 12px;
+                padding: 15px;
+                min-width: 60px;
+                text-align: center;
+                position: relative;
+                transition: all 0.2s ease;
+                cursor: pointer;
+            }
+            
+            .element-tile:hover {
+                border-color: #667eea;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+            
+            .element-tile.reversed {
+                border-color: #ed8936;
+                background: #fef5e7;
+            }
+            
+            .element-tile.reversed:hover {
+                border-color: #dd6b20;
+            }
+            
+            .element-symbol {
+                font-size: 1.4rem;
+                font-weight: 700;
+                color: #2d3748;
+                margin-bottom: 4px;
+            }
+            
+            .element-name {
+                font-size: 0.8rem;
+                color: #718096;
+                font-weight: 500;
+            }
+            
+            .element-number {
+                position: absolute;
+                top: 2px;
+                right: 4px;
+                font-size: 0.7rem;
+                color: #a0aec0;
+                font-weight: 500;
+            }
+            
+            .reversed-indicator {
+                position: absolute;
+                top: 2px;
+                left: 4px;
+                width: 8px;
+                height: 8px;
+                background: #ed8936;
+                border-radius: 50%;
+            }
+            
+            .api-link {
+                text-align: center;
+                margin-top: 40px;
+                padding-top: 20px;
+                border-top: 1px solid #e2e8f0;
+            }
+            
+            .api-link a {
+                color: #667eea;
+                text-decoration: none;
+                font-weight: 500;
+            }
+            
+            .api-link a:hover {
+                text-decoration: underline;
+            }
+            
+            @media (max-width: 600px) {
+                .container {
+                    margin: 10px;
+                    padding: 20px;
+                }
+                
+                h1 {
+                    font-size: 2rem;
+                }
+                
+                .input-group {
+                    flex-direction: column;
+                }
+                
+                #wordInput {
+                    min-width: 100%;
+                }
+                
+                .solution-header {
+                    flex-direction: column;
+                    gap: 10px;
+                    align-items: flex-start;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Element Words</h1>
+            <p class="subtitle">Create words using chemical element symbols</p>
+            
+            <div class="input-section">
+                <div class="input-group">
+                    <input type="text" id="wordInput" placeholder="Enter a word (e.g., hero, water, science)" maxlength="50">
+                    <button class="btn" onclick="searchWord()">Find Elements</button>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="allowReversed">
+                    <label for="allowReversed">Allow reversed symbols (He + eH, Li + iL, etc.)</label>
+                </div>
+            </div>
+            
+            <div id="loading" class="loading" style="display: none;">
+                Searching for element combinations...
+            </div>
+            
+            <div id="error" class="error" style="display: none;"></div>
+            
+            <div id="noResults" class="no-results" style="display: none;">
+                No element combinations found for this word. Try allowing reversed symbols or a different word.
+            </div>
+            
+            <div id="results" class="results"></div>
+            
+            <div class="api-link">
+                <a href="/api/v1/docs" target="_blank">View API Documentation</a>
+            </div>
+        </div>
+        
+        <script>
+            const wordInput = document.getElementById('wordInput');
+            const allowReversedCheckbox = document.getElementById('allowReversed');
+            const loadingDiv = document.getElementById('loading');
+            const errorDiv = document.getElementById('error');
+            const noResultsDiv = document.getElementById('noResults');
+            const resultsDiv = document.getElementById('results');
+            
+            // Allow Enter key to trigger search
+            wordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchWord();
+                }
+            });
+            
+            // Clear results when input changes
+            wordInput.addEventListener('input', function() {
+                clearResults();
+            });
+            
+            allowReversedCheckbox.addEventListener('change', function() {
+                if (wordInput.value.trim()) {
+                    searchWord();
+                }
+            });
+            
+            function clearResults() {
+                loadingDiv.style.display = 'none';
+                errorDiv.style.display = 'none';
+                noResultsDiv.style.display = 'none';
+                resultsDiv.innerHTML = '';
+            }
+            
+            async function searchWord() {
+                const word = wordInput.value.trim();
+                if (!word) {
+                    showError('Please enter a word');
+                    return;
+                }
+                
+                clearResults();
+                loadingDiv.style.display = 'block';
+                
+                try {
+                    const allowReversed = allowReversedCheckbox.checked;
+                    const url = `/api/v1/words/${encodeURIComponent(word)}${allowReversed ? '?allow_reversed_symbols=true' : ''}`;
+                    
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    
+                    loadingDiv.style.display = 'none';
+                    
+                    if (!response.ok) {
+                        showError(data.error?.message || 'An error occurred');
+                        return;
+                    }
+                    
+                    displayResults(data.data);
+                } catch (error) {
+                    loadingDiv.style.display = 'none';
+                    showError('Network error. Please try again.');
+                }
+            }
+            
+            function showError(message) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            }
+            
+            function displayResults(data) {
+                if (!data.solutions || data.solutions.length === 0) {
+                    noResultsDiv.style.display = 'block';
+                    return;
+                }
+                
+                const solutions = data.solutions;
+                let html = '';
+                
+                solutions.forEach((solution, index) => {
+                    const elementCount = solution.elements.length;
+                    const elementCountText = elementCount === 1 ? '1 element' : `${elementCount} elements`;
+                    
+                    html += `
+                        <div class="solution">
+                            <div class="solution-header">
+                                <div class="solution-title">${solution.representation}</div>
+                                <div class="element-count">${elementCountText}</div>
+                            </div>
+                            <div class="elements-container">
+                    `;
+                    
+                    solution.elements.forEach(element => {
+                        const reversedClass = element.reversed ? ' reversed' : '';
+                        const reversedIndicator = element.reversed ? '<div class="reversed-indicator"></div>' : '';
+                        
+                        html += `
+                            <div class="element-tile${reversedClass}" title="${element.name} (${element.symbol})${element.reversed ? ' - Reversed symbol' : ''}">
+                                <div class="element-number">${element.atomic_number}</div>
+                                ${reversedIndicator}
+                                <div class="element-symbol">${element.symbol}</div>
+                                <div class="element-name">${element.name}</div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                resultsDiv.innerHTML = html;
+            }
+            
+            // Auto-focus input on page load
+            window.addEventListener('load', function() {
+                wordInput.focus();
+            });
+        </script>
+    </body>
+    </html>
+    """
+
+# API Documentation endpoint (moved to /api route)
 @app.get('/api')
 def api_documentation():
     """API documentation and available endpoints"""
@@ -179,6 +626,7 @@ def api_documentation():
 }</pre>
         
         <p><a href="https://github.com/chriswilson1982/element-words">GitHub Repository</a></p>
+        <p><a href="/">← Back to Element Words App</a></p>
     </body>
     </html>
     """
