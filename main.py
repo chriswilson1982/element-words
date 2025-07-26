@@ -207,6 +207,14 @@ def element_words_app():
                 box-shadow: none;
             }
             
+            .btn-secondary {
+                background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+            }
+            
+            .btn-secondary:hover {
+                box-shadow: 0 10px 20px rgba(113, 128, 150, 0.3);
+            }
+            
             .checkbox-group {
                 display: flex;
                 align-items: center;
@@ -472,6 +480,7 @@ def element_words_app():
                 <div class="input-group">
                     <input type="text" id="wordInput" placeholder="Enter a word (e.g., hero, water, science)" maxlength="50">
                     <button class="btn" onclick="searchWord()">Find Elements</button>
+                    <button class="btn btn-secondary" id="shareBtn" onclick="shareCurrentState()" style="display: none;">Share</button>
                 </div>
                 <div class="checkbox-group">
                     <input type="checkbox" id="allowReversed">
@@ -515,6 +524,7 @@ def element_words_app():
         <script>
             const wordInput = document.getElementById('wordInput');
             const allowReversedCheckbox = document.getElementById('allowReversed');
+            const shareBtn = document.getElementById('shareBtn');
             const loadingDiv = document.getElementById('loading');
             const errorDiv = document.getElementById('error');
             const noResultsDiv = document.getElementById('noResults');
@@ -527,6 +537,62 @@ def element_words_app():
             
             // Store current solutions for re-sorting
             let currentSolutions = [];
+            
+            // Initialize app based on URL parameters on page load
+            function initializeFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                
+                // Set word if provided
+                const word = urlParams.get('word');
+                if (word) {
+                    wordInput.value = word;
+                }
+                
+                // Set allow_reversed_symbols if provided
+                const allowReversed = urlParams.get('allow_reversed_symbols');
+                if (allowReversed === 'true') {
+                    allowReversedCheckbox.checked = true;
+                }
+                
+                // Set sorting options if provided
+                const sortBy = urlParams.get('sort_by');
+                if (sortBy && (sortBy === 'elements' || sortBy === 'score')) {
+                    sortBySelect.value = sortBy;
+                }
+                
+                const sortOrder = urlParams.get('sort_order');
+                if (sortOrder && (sortOrder === 'asc' || sortOrder === 'desc')) {
+                    sortOrderSelect.value = sortOrder;
+                }
+                
+                // Automatically search if word is provided
+                if (word) {
+                    searchWord();
+                }
+            }
+            
+            // Update URL with current state
+            function updateURL() {
+                const urlParams = new URLSearchParams();
+                
+                const word = wordInput.value.trim();
+                if (word) {
+                    urlParams.set('word', word);
+                }
+                
+                if (allowReversedCheckbox.checked) {
+                    urlParams.set('allow_reversed_symbols', 'true');
+                }
+                
+                if (currentSolutions.length > 1) {
+                    urlParams.set('sort_by', sortBySelect.value);
+                    urlParams.set('sort_order', sortOrderSelect.value);
+                }
+                
+                // Update URL without reloading the page
+                const newURL = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+                window.history.replaceState({}, '', newURL);
+            }
             
             // Allow Enter key to trigger search
             wordInput.addEventListener('keypress', function(e) {
@@ -543,6 +609,8 @@ def element_words_app():
             allowReversedCheckbox.addEventListener('change', function() {
                 if (wordInput.value.trim()) {
                     searchWord();
+                } else {
+                    updateURL();
                 }
             });
             
@@ -551,12 +619,14 @@ def element_words_app():
                 if (currentSolutions.length > 0) {
                     displaySolutions(currentSolutions);
                 }
+                updateURL();
             });
             
             sortOrderSelect.addEventListener('change', function() {
                 if (currentSolutions.length > 0) {
                     displaySolutions(currentSolutions);
                 }
+                updateURL();
             });
             
             function clearResults() {
@@ -565,6 +635,7 @@ def element_words_app():
                 noResultsDiv.style.display = 'none';
                 solutionsCountDiv.style.display = 'none';
                 sortingControlsDiv.style.display = 'none';
+                shareBtn.style.display = 'none';
                 resultsDiv.innerHTML = '';
                 currentSolutions = [];
             }
@@ -594,6 +665,7 @@ def element_words_app():
                     }
                     
                     displayResults(data.data);
+                    updateURL();
                 } catch (error) {
                     loadingDiv.style.display = 'none';
                     showError('Network error. Please try again.');
@@ -614,8 +686,106 @@ def element_words_app():
                 // Store solutions for re-sorting
                 currentSolutions = data.solutions;
                 
+                // Show share button when there are results
+                shareBtn.style.display = 'inline-block';
+                
                 // Display solutions with current sorting
                 displaySolutions(currentSolutions);
+            }
+            
+            // Share current state
+            function shareCurrentState() {
+                const currentURL = window.location.href;
+                
+                // Try to use the Web Share API if available (modern browsers, especially mobile)
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Element Words - ' + wordInput.value.trim(),
+                        text: 'Check out this word made from chemical element symbols!',
+                        url: currentURL
+                    }).catch(err => {
+                        // Fallback to copying URL if share fails
+                        copyToClipboard(currentURL);
+                    });
+                } else {
+                    // Fallback: copy URL to clipboard
+                    copyToClipboard(currentURL);
+                }
+            }
+            
+            // Copy text to clipboard
+            function copyToClipboard(text) {
+                // Try the modern clipboard API first
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        showToast('URL copied to clipboard!');
+                    }).catch(() => {
+                        // Fallback to older method
+                        fallbackCopyToClipboard(text);
+                    });
+                } else {
+                    // Fallback to older method
+                    fallbackCopyToClipboard(text);
+                }
+            }
+            
+            // Fallback clipboard method for older browsers
+            function fallbackCopyToClipboard(text) {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                try {
+                    document.execCommand('copy');
+                    showToast('URL copied to clipboard!');
+                } catch (err) {
+                    showToast('Unable to copy URL. Please copy manually: ' + text);
+                }
+                
+                document.body.removeChild(textArea);
+            }
+            
+            // Show toast notification
+            function showToast(message) {
+                // Create toast element
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #48bb78;
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    font-weight: 500;
+                    z-index: 1000;
+                    transform: translateX(100%);
+                    transition: transform 0.3s ease;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                `;
+                toast.textContent = message;
+                
+                document.body.appendChild(toast);
+                
+                // Animate in
+                setTimeout(() => {
+                    toast.style.transform = 'translateX(0)';
+                }, 100);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    toast.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (document.body.contains(toast)) {
+                            document.body.removeChild(toast);
+                        }
+                    }, 300);
+                }, 3000);
             }
             
             function displaySolutions(solutions) {
@@ -705,9 +875,13 @@ def element_words_app():
                 resultsDiv.innerHTML = html;
             }
             
-            // Auto-focus input on page load
+            // Initialize app on page load
             window.addEventListener('load', function() {
-                wordInput.focus();
+                initializeFromURL();
+                // Only focus input if no word was provided in URL
+                if (!wordInput.value.trim()) {
+                    wordInput.focus();
+                }
             });
         </script>
     </body>
