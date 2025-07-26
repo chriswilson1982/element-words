@@ -336,15 +336,7 @@ def element_words_app():
                 font-weight: 500;
             }
             
-            .reversed-indicator {
-                position: absolute;
-                top: 2px;
-                left: 4px;
-                width: 8px;
-                height: 8px;
-                background: #ed8936;
-                border-radius: 50%;
-            }
+
             
             .api-link {
                 text-align: center;
@@ -529,13 +521,22 @@ def element_words_app():
                     
                     solution.elements.forEach(element => {
                         const reversedClass = element.reversed ? ' reversed' : '';
-                        const reversedIndicator = element.reversed ? '<div class="reversed-indicator"></div>' : '';
+                        
+                        // Transform display for reversed symbols (UI only)
+                        let displaySymbol = element.symbol;
+                        let displayAtomicNumber = element.atomic_number;
+                        
+                        if (element.reversed) {
+                            // Reverse the symbol letter order (e.g., "He" -> "eH")
+                            displaySymbol = element.symbol.split('').reverse().join('');
+                            // Reverse the atomic number digits (e.g., 107 -> 701)
+                            displayAtomicNumber = element.atomic_number.toString().split('').reverse().join('');
+                        }
                         
                         html += `
-                            <div class="element-tile${reversedClass}" title="${element.name} (${element.symbol})${element.reversed ? ' - Reversed symbol' : ''}">
-                                <div class="element-number">${element.atomic_number}</div>
-                                ${reversedIndicator}
-                                <div class="element-symbol">${element.symbol}</div>
+                            <div class="element-tile${reversedClass}" title="${element.name} (${displaySymbol})${element.reversed ? ' - Reversed symbol' : ''}">
+                                <div class="element-number">${displayAtomicNumber}</div>
+                                <div class="element-symbol">${displaySymbol}</div>
                                 <div class="element-name">${element.name}</div>
                             </div>
                         `;
