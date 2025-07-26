@@ -229,6 +229,18 @@ def element_words_app():
                 font-size: 1.1rem;
             }
             
+            .solutions-count {
+                text-align: center;
+                margin: 20px 0;
+                padding: 15px 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border-radius: 12px;
+                font-size: 1.2rem;
+                font-weight: 600;
+                box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+            }
+            
             .results {
                 margin-top: 30px;
             }
@@ -403,6 +415,10 @@ def element_words_app():
                 No element combinations found for this word. Try allowing reversed symbols or a different word.
             </div>
             
+            <div id="solutionsCount" class="solutions-count" style="display: none;">
+                <span id="countText"></span>
+            </div>
+            
             <div id="results" class="results"></div>
             
             <div class="api-link">
@@ -416,6 +432,8 @@ def element_words_app():
             const loadingDiv = document.getElementById('loading');
             const errorDiv = document.getElementById('error');
             const noResultsDiv = document.getElementById('noResults');
+            const solutionsCountDiv = document.getElementById('solutionsCount');
+            const countTextSpan = document.getElementById('countText');
             const resultsDiv = document.getElementById('results');
             
             // Allow Enter key to trigger search
@@ -440,6 +458,7 @@ def element_words_app():
                 loadingDiv.style.display = 'none';
                 errorDiv.style.display = 'none';
                 noResultsDiv.style.display = 'none';
+                solutionsCountDiv.style.display = 'none';
                 resultsDiv.innerHTML = '';
             }
             
@@ -486,6 +505,13 @@ def element_words_app():
                 }
                 
                 const solutions = data.solutions;
+                const solutionCount = solutions.length;
+                
+                // Display solutions count
+                const countText = solutionCount === 1 ? '1 solution found' : `${solutionCount} solutions found`;
+                countTextSpan.textContent = countText;
+                solutionsCountDiv.style.display = 'block';
+                
                 let html = '';
                 
                 solutions.forEach((solution, index) => {
