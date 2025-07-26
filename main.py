@@ -73,6 +73,20 @@ def get_available_symbols(reverse_symbols=False):
                 symbols.append(reversed_symbol)
     return symbols
 
+def calculate_solution_score(elements_data):
+    """Calculate the total score for a solution based on atomic numbers"""
+    total_score = 0
+    for element in elements_data:
+        atomic_number = element["atomic_number"]
+        if element["reversed"]:
+            # For reversed symbols, reverse the digits of the atomic number
+            # E.g., 118 becomes 811
+            reversed_atomic_number = int(str(atomic_number)[::-1])
+            total_score += reversed_atomic_number
+        else:
+            total_score += atomic_number
+    return total_score
+
 @app.hook('after_request')
 def enable_cors():
     """Enable CORS for all responses"""
@@ -241,6 +255,36 @@ def element_words_app():
                 box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
             }
             
+            .sorting-controls {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 15px;
+                margin-bottom: 25px;
+                flex-wrap: wrap;
+            }
+            
+            .sorting-controls label {
+                font-weight: 600;
+                color: #4a5568;
+            }
+            
+            .sorting-controls select {
+                padding: 8px 12px;
+                border: 2px solid #e2e8f0;
+                border-radius: 8px;
+                background: white;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: border-color 0.2s ease;
+            }
+            
+            .sorting-controls select:focus {
+                outline: none;
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            }
+            
             .results {
                 margin-top: 30px;
             }
@@ -272,8 +316,23 @@ def element_words_app():
                 color: #2d3748;
             }
             
+            .solution-stats {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+            
             .element-count {
                 background: #667eea;
+                color: white;
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+            
+            .score {
+                background: #48bb78;
                 color: white;
                 padding: 4px 12px;
                 border-radius: 20px;
@@ -378,6 +437,16 @@ def element_words_app():
                     gap: 10px;
                     align-items: flex-start;
                 }
+                
+                .sorting-controls {
+                    flex-direction: column;
+                    gap: 10px;
+                    align-items: stretch;
+                }
+                
+                .sorting-controls select {
+                    width: 100%;
+                }
             }
         </style>
     </head>
@@ -411,6 +480,18 @@ def element_words_app():
                 <span id="countText"></span>
             </div>
             
+            <div id="sortingControls" class="sorting-controls" style="display: none;">
+                <label for="sortBy">Sort by:</label>
+                <select id="sortBy">
+                    <option value="elements">Number of Elements</option>
+                    <option value="score">Score</option>
+                </select>
+                <select id="sortOrder">
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                </select>
+            </div>
+            
             <div id="results" class="results"></div>
             
             <div class="api-link">
@@ -425,8 +506,14 @@ def element_words_app():
             const errorDiv = document.getElementById('error');
             const noResultsDiv = document.getElementById('noResults');
             const solutionsCountDiv = document.getElementById('solutionsCount');
+            const sortingControlsDiv = document.getElementById('sortingControls');
+            const sortBySelect = document.getElementById('sortBy');
+            const sortOrderSelect = document.getElementById('sortOrder');
             const countTextSpan = document.getElementById('countText');
             const resultsDiv = document.getElementById('results');
+            
+            // Store current solutions for re-sorting
+            let currentSolutions = [];
             
             // Allow Enter key to trigger search
             wordInput.addEventListener('keypress', function(e) {
@@ -446,12 +533,27 @@ def element_words_app():
                 }
             });
             
+            // Add event listeners for sorting controls
+            sortBySelect.addEventListener('change', function() {
+                if (currentSolutions.length > 0) {
+                    displaySolutions(currentSolutions);
+                }
+            });
+            
+            sortOrderSelect.addEventListener('change', function() {
+                if (currentSolutions.length > 0) {
+                    displaySolutions(currentSolutions);
+                }
+            });
+            
             function clearResults() {
                 loadingDiv.style.display = 'none';
                 errorDiv.style.display = 'none';
                 noResultsDiv.style.display = 'none';
                 solutionsCountDiv.style.display = 'none';
+                sortingControlsDiv.style.display = 'none';
                 resultsDiv.innerHTML = '';
+                currentSolutions = [];
             }
             
             async function searchWord() {
@@ -496,7 +598,14 @@ def element_words_app():
                     return;
                 }
                 
-                const solutions = data.solutions;
+                // Store solutions for re-sorting
+                currentSolutions = data.solutions;
+                
+                // Display solutions with current sorting
+                displaySolutions(currentSolutions);
+            }
+            
+            function displaySolutions(solutions) {
                 const solutionCount = solutions.length;
                 
                 // Display solutions count
@@ -504,17 +613,48 @@ def element_words_app():
                 countTextSpan.textContent = countText;
                 solutionsCountDiv.style.display = 'block';
                 
+                // Show sorting controls if there are multiple solutions
+                if (solutionCount > 1) {
+                    sortingControlsDiv.style.display = 'flex';
+                }
+                
+                // Sort solutions based on current selection
+                const sortBy = sortBySelect.value;
+                const sortOrder = sortOrderSelect.value;
+                
+                const sortedSolutions = [...solutions].sort((a, b) => {
+                    let valueA, valueB;
+                    
+                    if (sortBy === 'elements') {
+                        valueA = a.elements.length;
+                        valueB = b.elements.length;
+                    } else if (sortBy === 'score') {
+                        valueA = a.score || 0;
+                        valueB = b.score || 0;
+                    }
+                    
+                    if (sortOrder === 'asc') {
+                        return valueA - valueB;
+                    } else {
+                        return valueB - valueA;
+                    }
+                });
+                
                 let html = '';
                 
-                solutions.forEach((solution, index) => {
+                sortedSolutions.forEach((solution, index) => {
                     const elementCount = solution.elements.length;
                     const elementCountText = elementCount === 1 ? '1 element' : `${elementCount} elements`;
+                    const score = solution.score || 0;
                     
                     html += `
                         <div class="solution">
                             <div class="solution-header">
                                 <div class="solution-title">${solution.representation}</div>
-                                <div class="element-count">${elementCountText}</div>
+                                <div class="solution-stats">
+                                    <div class="element-count">${elementCountText}</div>
+                                    <div class="score">Score: ${score}</div>
+                                </div>
                             </div>
                             <div class="elements-container">
                     `;
@@ -762,10 +902,14 @@ def get_word_combinations(word):
                     "reversed": is_reversed
                 })
             
+            # Calculate score for this solution
+            score = calculate_solution_score(elements_data)
+            
             solution = {
                 "representation": text_repr,
                 "symbols": list(symbols_tuple),
-                "elements": elements_data
+                "elements": elements_data,
+                "score": score
             }
             solutions.append(solution)
         

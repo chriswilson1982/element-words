@@ -385,6 +385,7 @@ components:
       - representation
       - symbols
       - elements
+      - score
       properties:
         representation:
           type: string
@@ -405,6 +406,10 @@ components:
           description: Detailed information about each element used
           items:
             "$ref": "#/components/schemas/Element"
+        score:
+          type: integer
+          description: Total score calculated from atomic numbers (reversed symbols have reversed atomic number digits)
+          example: 69
     SuccessResponse:
       type: object
       required:
