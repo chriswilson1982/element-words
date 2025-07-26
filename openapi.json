@@ -572,7 +572,8 @@
         "required": [
           "representation",
           "symbols",
-          "elements"
+          "elements",
+          "score"
         ],
         "properties": {
           "representation": {
@@ -599,6 +600,11 @@
             "items": {
               "$ref": "#/components/schemas/Element"
             }
+          },
+          "score": {
+            "type": "integer",
+            "description": "Total score calculated from atomic numbers (reversed symbols have reversed atomic number digits)",
+            "example": 69
           }
         }
       },

@@ -73,6 +73,20 @@ def get_available_symbols(reverse_symbols=False):
                 symbols.append(reversed_symbol)
     return symbols
 
+def calculate_solution_score(elements_data):
+    """Calculate the total score for a solution based on atomic numbers"""
+    total_score = 0
+    for element in elements_data:
+        atomic_number = element["atomic_number"]
+        if element["reversed"]:
+            # For reversed symbols, reverse the digits of the atomic number
+            # E.g., 118 becomes 811
+            reversed_atomic_number = int(str(atomic_number)[::-1])
+            total_score += reversed_atomic_number
+        else:
+            total_score += atomic_number
+    return total_score
+
 @app.hook('after_request')
 def enable_cors():
     """Enable CORS for all responses"""
@@ -272,8 +286,23 @@ def element_words_app():
                 color: #2d3748;
             }
             
+            .solution-stats {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+            
             .element-count {
                 background: #667eea;
+                color: white;
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+            
+            .score {
+                background: #48bb78;
                 color: white;
                 padding: 4px 12px;
                 border-radius: 20px;
@@ -509,12 +538,16 @@ def element_words_app():
                 solutions.forEach((solution, index) => {
                     const elementCount = solution.elements.length;
                     const elementCountText = elementCount === 1 ? '1 element' : `${elementCount} elements`;
+                    const score = solution.score || 0;
                     
                     html += `
                         <div class="solution">
                             <div class="solution-header">
                                 <div class="solution-title">${solution.representation}</div>
-                                <div class="element-count">${elementCountText}</div>
+                                <div class="solution-stats">
+                                    <div class="element-count">${elementCountText}</div>
+                                    <div class="score">Score: ${score}</div>
+                                </div>
                             </div>
                             <div class="elements-container">
                     `;
@@ -762,10 +795,14 @@ def get_word_combinations(word):
                     "reversed": is_reversed
                 })
             
+            # Calculate score for this solution
+            score = calculate_solution_score(elements_data)
+            
             solution = {
                 "representation": text_repr,
                 "symbols": list(symbols_tuple),
-                "elements": elements_data
+                "elements": elements_data,
+                "score": score
             }
             solutions.append(solution)
         

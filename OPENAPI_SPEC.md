@@ -32,8 +32,13 @@ The Element Words API converts words into chemical element symbol combinations. 
 ### Complete Schema Definitions
 - **Element**: Chemical element with symbol, name, and atomic number
 - **WordCombinations**: Complete word analysis results
-- **Solution**: Individual element combination with detailed breakdown
+- **Solution**: Individual element combination with detailed breakdown and score
 - **SuccessResponse/ErrorResponse**: Standardized response formats
+
+### Solution Scoring
+Each solution includes a calculated score based on atomic numbers:
+- Normal symbols use their standard atomic number
+- Reversed symbols use their atomic number with digits reversed (e.g., Og=118 becomes gO=811)
 
 ### Comprehensive Error Handling
 All possible error codes are documented:
