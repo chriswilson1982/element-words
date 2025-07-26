@@ -395,6 +395,19 @@ def element_words_app():
                 font-weight: 500;
             }
             
+            .element-tile.reversed .element-number {
+                color: #ed8936;
+            }
+            
+            .element-reverse-icon {
+                position: absolute;
+                top: 2px;
+                left: 4px;
+                font-size: 0.7rem;
+                color: #ed8936;
+                font-weight: 500;
+            }
+            
 
             
             .api-link {
@@ -675,6 +688,7 @@ def element_words_app():
                         
                         html += `
                             <div class="element-tile${reversedClass}" title="${element.name} (${displaySymbol})${element.reversed ? ' - Reversed symbol' : ''}">
+                                ${element.reversed ? '<div class="element-reverse-icon">⟲</div>' : ''}
                                 <div class="element-number">${displayAtomicNumber}</div>
                                 <div class="element-symbol">${displaySymbol}</div>
                                 <div class="element-name">${element.name}</div>
