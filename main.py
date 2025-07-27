@@ -129,7 +129,6 @@ def element_words_app():
         <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-180x180-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="196x196" href="/static/android-chrome-196x196.png" />
         <link rel="icon" type="image/png" href="/static/android-chrome-192x192.png" sizes="192x192" type="image/png">
-        <link rel="icon" type="image/png" href="/static/android-chrome-256x256.png" sizes="256x256" type="image/png">
         <link rel="icon" type="image/png" href="/static/android-chrome-384x384.png" sizes="384x384" type="image/png">
         <link rel="icon" type="image/png" href="/static/android-chrome-512x512.png" sizes="512x512" type="image/png">
         
