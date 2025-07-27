@@ -160,10 +160,10 @@ def element_words_app():
         <meta property="og:type" content="website">
         <meta property="og:title" content="Element Words - Spell with Chemical Elements" id="og-title">
         <meta property="og:description" content="Create words using chemical element symbols from the periodic table." id="og-description">
-        <meta property="og:image" content="https://elements.chriswilson.app/static/og-image.png" id="og-image">
+        <meta property="og:image" content="https://elements.chriswilson.app/static/android-chrome-512x512.png" id="og-image">
         <meta property="og:image:alt" content="Element Words - Spell with Chemical Elements" id="og-image-alt">
-        <meta property="og:image:width" content="1200">
-        <meta property="og:image:height" content="630">
+        <meta property="og:image:width" content="512">
+        <meta property="og:image:height" content="512">
         <meta property="og:image:type" content="image/png">
         <meta property="og:url" content="{request.url}" id="og-url">
         
@@ -609,25 +609,34 @@ def element_words_app():
             // Update page title and meta tags for sharing
             function updatePageMetadata(word) {
                 const baseTitle = "Element Words";
-                const newTitle = word ? `${baseTitle} - ${word.toUpperCase()}` : baseTitle;
-                const newDescription = word ? 
-                    `Check out "${word.toUpperCase()}" spelled using chemical element symbols from the periodic table!` : 
+                const cleanWord = word ? word.trim().toUpperCase() : null;
+                const newTitle = cleanWord ? `${baseTitle} - ${cleanWord}` : `${baseTitle} - Spell with Chemical Elements`;
+                const newDescription = cleanWord ? 
+                    `Check out "${cleanWord}" spelled using chemical element symbols from the periodic table!` : 
                     "Create words using chemical element symbols from the periodic table.";
                 
                 // Update page title
                 document.title = newTitle;
                 
                 // Update Open Graph meta tags
-                document.getElementById('og-title').setAttribute('content', newTitle);
-                document.getElementById('og-description').setAttribute('content', newDescription);
-                document.getElementById('og-image-alt').setAttribute('content', newTitle);
-                document.getElementById('og-url').setAttribute('content', window.location.href);
+                const ogTitle = document.getElementById('og-title');
+                const ogDescription = document.getElementById('og-description');
+                const ogImageAlt = document.getElementById('og-image-alt');
+                const ogUrl = document.getElementById('og-url');
+                
+                if (ogTitle) ogTitle.setAttribute('content', newTitle);
+                if (ogDescription) ogDescription.setAttribute('content', newDescription);
+                if (ogImageAlt) ogImageAlt.setAttribute('content', newTitle);
+                if (ogUrl) ogUrl.setAttribute('content', window.location.href);
                 
                 // Update general description meta tag
                 const descriptionMeta = document.querySelector('meta[name="description"]');
                 if (descriptionMeta) {
                     descriptionMeta.setAttribute('content', newDescription);
                 }
+                
+                // Force a DOM update to ensure changes are applied
+                document.head.offsetHeight; // Trigger reflow
             }
             
             // Initialize app based on URL parameters on page load
@@ -657,8 +666,9 @@ def element_words_app():
                     sortOrderSelect.value = sortOrder;
                 }
                 
-                // Automatically search if word is provided
+                // Update metadata immediately with the word from URL if present
                 if (word) {
+                    updatePageMetadata(word);
                     searchWord();
                 } else {
                     // Set initial metadata
@@ -811,20 +821,35 @@ def element_words_app():
                 // Ensure meta tags are updated before sharing (for share sheet preview)
                 updatePageMetadata(word);
                 
-                // Try to use the Web Share API if available (modern browsers, especially mobile)
-                if (navigator.share) {
-                    navigator.share({
-                        title: shareTitle,
-                        text: shareText,
-                        url: currentURL
-                    }).catch(err => {
-                        // Fallback to copying URL if share fails
-                        copyToClipboard(currentURL);
-                    });
-                } else {
-                    // Fallback: copy URL to clipboard
-                    copyToClipboard(currentURL);
+                // Force meta tag updates to be processed immediately
+                // This is critical for share sheet previews
+                const ogTitle = document.getElementById('og-title');
+                const ogDescription = document.getElementById('og-description');
+                if (ogTitle && word) {
+                    ogTitle.setAttribute('content', `Element Words - ${word.toUpperCase()}`);
                 }
+                if (ogDescription && word) {
+                    ogDescription.setAttribute('content', `Check out "${word.toUpperCase()}" spelled using chemical element symbols from the periodic table!`);
+                }
+                
+                // Add a small delay to ensure meta tags are processed before sharing
+                // This helps with share sheet previews that read the meta tags
+                setTimeout(() => {
+                    // Try to use the Web Share API if available (modern browsers, especially mobile)
+                    if (navigator.share) {
+                        navigator.share({
+                            title: shareTitle,
+                            text: shareText,
+                            url: currentURL
+                        }).catch(err => {
+                            // Fallback to copying URL if share fails
+                            copyToClipboard(currentURL);
+                        });
+                    } else {
+                        // Fallback: copy URL to clipboard
+                        copyToClipboard(currentURL);
+                    }
+                }, 100); // Small delay to allow meta tag updates to be processed
             }
             
             // Copy text to clipboard
