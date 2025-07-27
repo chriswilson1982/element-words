@@ -119,15 +119,36 @@ def element_words_app():
         <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png" />
         <link rel="manifest" href="/static/site.webmanifest" />
         
+        <!-- Additional meta tags for PWA and share support -->
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        <meta name="apple-mobile-web-app-title" content="Element Words">
+        <meta name="theme-color" content="#667eea">
+        <meta name="msapplication-TileColor" content="#667eea">
+        <meta name="msapplication-TileImage" content="/static/apple-touch-icon.png">
+        
         <!-- Open Graph / Social Media Meta Tags -->
         <meta property="og:type" content="website">
-        <meta property="og:title" content="Element Words - Spell with Chemical Elements">
-        <meta property="og:description" content="Create words using chemical element symbols from the periodic table.">
-        <meta property="og:image" content="https://elements.chriswilson.app/static/og-image.png">
-        <meta property="og:image:alt" content="Element Words - Spell with Chemical Elements">
+        <meta property="og:title" content="Element Words - Spell with Chemical Elements" id="og-title">
+        <meta property="og:description" content="Create words using chemical element symbols from the periodic table." id="og-description">
+        <meta property="og:image" content="/static/og-image.png" id="og-image">
+        <meta property="og:image:alt" content="Element Words - Spell with Chemical Elements" id="og-image-alt">
         <meta property="og:image:width" content="1200">
         <meta property="og:image:height" content="630">
-        <meta property="og:url" content="https://elements.chriswilson.app">
+        <meta property="og:image:type" content="image/png">
+        <meta property="og:url" content="" id="og-url">
+        
+        <!-- Additional meta tags for better share support -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Element Words - Spell with Chemical Elements" id="twitter-title">
+        <meta name="twitter:description" content="Create words using chemical element symbols from the periodic table." id="twitter-description">
+        <meta name="twitter:image" content="/static/og-image.png" id="twitter-image">
+        
+        <!-- Additional favicon formats for better compatibility -->
+        <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+        <link rel="icon" type="image/png" href="/static/favicon-16x16.png" sizes="16x16">
+        <link rel="icon" type="image/png" href="/static/favicon-32x32.png" sizes="32x32">
 
         <!-- General meta tags -->
         <meta name="description" content="Create words using chemical element symbols from the periodic table.">
@@ -564,6 +585,34 @@ def element_words_app():
             // Store current solutions for re-sorting
             let currentSolutions = [];
             
+            // Update page title and meta tags for sharing
+            function updatePageMetadata(word) {
+                const baseTitle = "Element Words";
+                const newTitle = word ? `${baseTitle} - ${word.toUpperCase()}` : baseTitle;
+                const newDescription = word ? 
+                    `Check out "${word.toUpperCase()}" spelled using chemical element symbols from the periodic table!` : 
+                    "Create words using chemical element symbols from the periodic table.";
+                
+                // Update page title
+                document.title = newTitle;
+                
+                // Update Open Graph meta tags
+                document.getElementById('og-title').setAttribute('content', newTitle);
+                document.getElementById('og-description').setAttribute('content', newDescription);
+                document.getElementById('og-image-alt').setAttribute('content', newTitle);
+                document.getElementById('og-url').setAttribute('content', window.location.href);
+                
+                // Update Twitter meta tags
+                document.getElementById('twitter-title').setAttribute('content', newTitle);
+                document.getElementById('twitter-description').setAttribute('content', newDescription);
+                
+                // Update general description meta tag
+                const descriptionMeta = document.querySelector('meta[name="description"]');
+                if (descriptionMeta) {
+                    descriptionMeta.setAttribute('content', newDescription);
+                }
+            }
+            
             // Initialize app based on URL parameters on page load
             function initializeFromURL() {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -594,6 +643,9 @@ def element_words_app():
                 // Automatically search if word is provided
                 if (word) {
                     searchWord();
+                } else {
+                    // Set initial metadata
+                    updatePageMetadata();
                 }
             }
             
@@ -664,6 +716,8 @@ def element_words_app():
                 shareBtn.style.display = 'none';
                 resultsDiv.innerHTML = '';
                 currentSolutions = [];
+                // Reset metadata to default
+                updatePageMetadata();
             }
             
             async function searchWord() {
@@ -706,11 +760,16 @@ def element_words_app():
             function displayResults(data) {
                 if (!data.solutions || data.solutions.length === 0) {
                     noResultsDiv.style.display = 'block';
+                    // Update metadata for no results case
+                    updatePageMetadata(data.input_word);
                     return;
                 }
                 
                 // Store solutions for re-sorting
                 currentSolutions = data.solutions;
+                
+                // Update page metadata with the current word for sharing
+                updatePageMetadata(data.input_word);
                 
                 // Show share button when there are results
                 shareBtn.style.display = 'inline-block';
@@ -722,12 +781,17 @@ def element_words_app():
             // Share current state
             function shareCurrentState() {
                 const currentURL = window.location.href;
+                const word = wordInput.value.trim();
+                const shareTitle = document.title; // Use the current page title
+                const shareText = word ? 
+                    `Check out "${word.toUpperCase()}" spelled using chemical element symbols!` : 
+                    'Check out this word made from chemical element symbols!';
                 
                 // Try to use the Web Share API if available (modern browsers, especially mobile)
                 if (navigator.share) {
                     navigator.share({
-                        title: 'Element Words - ' + wordInput.value.trim(),
-                        text: 'Check out this word made from chemical element symbols!',
+                        title: shareTitle,
+                        text: shareText,
                         url: currentURL
                     }).catch(err => {
                         // Fallback to copying URL if share fails
@@ -939,6 +1003,13 @@ def apple_touch_icon():
     """Serve Apple touch icon"""
     response.headers['Cache-Control'] = 'public, max-age=86400'  # Cache for 1 day
     return static_file('apple-touch-icon.png', root='./static')
+
+@app.route('/site.webmanifest')
+def web_manifest():
+    """Serve web manifest"""
+    response.headers['Cache-Control'] = 'public, max-age=86400'  # Cache for 1 day
+    response.headers['Content-Type'] = 'application/manifest+json'
+    return static_file('site.webmanifest', root='./static')
 
 # API Documentation endpoint (moved to /api route)
 @app.get('/api')
