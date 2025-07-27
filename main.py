@@ -113,28 +113,27 @@ def element_words_app():
         <title>Element Words - Spell with Chemical Elements</title>
         
         <!-- Favicon - Multiple formats for better subdomain compatibility -->
-        <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="shortcut icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <meta name="apple-mobile-web-app-title" content="Elements" />
-        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="icon" type="image/png" href="/static/favicon-96x96.png" sizes="96x96" />
+        <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+        <link rel="shortcut icon" href="/static/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png" />
+        <link rel="manifest" href="/static/site.webmanifest" />
         
         <!-- Open Graph / Social Media Meta Tags -->
         <meta property="og:type" content="website">
         <meta property="og:title" content="Element Words - Spell with Chemical Elements">
-        <meta property="og:description" content="Create words using chemical element symbols from the periodic table! A fun chemistry word game.">
-        <meta property="og:image" content="https://your-domain.com/static/og-image.png">  <!-- Update with actual domain -->
+        <meta property="og:description" content="Create words using chemical element symbols from the periodic table.">
+        <meta property="og:image" content="https://elements.chriswilson.app/static/og-image.png">
         <meta property="og:image:alt" content="Element Words - Spell with Chemical Elements">
         <meta property="og:image:width" content="1200">
         <meta property="og:image:height" content="630">
-        <meta property="og:url" content="https://your-domain.com">  <!-- Update with actual domain -->
-        
+        <meta property="og:url" content="https://elements.chriswilson.app">
 
         <!-- General meta tags -->
-        <meta name="description" content="Create words using chemical element symbols from the periodic table! A fun chemistry word game.">
+        <meta name="description" content="Create words using chemical element symbols from the periodic table.">
         <meta name="keywords" content="chemistry, periodic table, elements, word game, science, education">
-        <meta name="author" content="Element Words">
+        <meta name="author" content="Chris Wilson">
+        
         <style>
             * {
                 margin: 0;
