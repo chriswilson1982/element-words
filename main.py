@@ -110,7 +110,30 @@ def element_words_app():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Element Words</title>
+        <title>Element Words - Spell with Chemical Elements</title>
+        
+        <!-- Favicon (atom emoji) -->
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚛️</text></svg>">
+        
+        <!-- Open Graph / Social Media Meta Tags -->
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Element Words - Spell with Chemical Elements">
+        <meta property="og:description" content="Create words using chemical element symbols from the periodic table! A fun chemistry word game.">
+        <meta property="og:image" content="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 630%22><rect width=%221200%22 height=%22630%22 fill=%22%23667eea%22/><text x=%22600%22 y=%22200%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2280%22 font-family=%22Arial%22>⚛️ Element Words</text><text x=%22600%22 y=%22280%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2240%22 font-family=%22Arial%22>Spell with Chemical Elements</text><rect x=%22400%22 y=%22350%22 width=%22100%22 height=%22100%22 fill=%22white%22 stroke=%22%234a5568%22 stroke-width=%223%22/><text x=%22450%22 y=%22415%22 text-anchor=%22middle%22 fill=%22%232d3748%22 font-size=%2260%22 font-family=%22Arial%22>H</text><rect x=%22520%22 y=%22350%22 width=%22100%22 height=%22100%22 fill=%22white%22 stroke=%22%234a5568%22 stroke-width=%223%22/><text x=%22570%22 y=%22415%22 text-anchor=%22middle%22 fill=%22%232d3748%22 font-size=%2260%22 font-family=%22Arial%22>He</text><rect x=%22640%22 y=%22350%22 width=%22100%22 height=%22100%22 fill=%22white%22 stroke=%22%234a5568%22 stroke-width=%223%22/><text x=%22690%22 y=%22415%22 text-anchor=%22middle%22 fill=%22%232d3748%22 font-size=%2260%22 font-family=%22Arial%22>Li</text></svg>">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+        <meta property="og:url" content="">
+        
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Element Words - Spell with Chemical Elements">
+        <meta name="twitter:description" content="Create words using chemical element symbols from the periodic table! A fun chemistry word game.">
+        <meta name="twitter:image" content="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 630%22><rect width=%221200%22 height=%22630%22 fill=%22%23667eea%22/><text x=%22600%22 y=%22200%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2280%22 font-family=%22Arial%22>⚛️ Element Words</text><text x=%22600%22 y=%22280%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2240%22 font-family=%22Arial%22>Spell with Chemical Elements</text><rect x=%22400%22 y=%22350%22 width=%22100%22 height=%22100%22 fill=%22white%22 stroke=%22%234a5568%22 stroke-width=%223%22/><text x=%22450%22 y=%22415%22 text-anchor=%22middle%22 fill=%22%232d3748%22 font-size=%2260%22 font-family=%22Arial%22>H</text><rect x=%22520%22 y=%22350%22 width=%22100%22 height=%22100%22 fill=%22white%22 stroke=%22%234a5568%22 stroke-width=%223%22/><text x=%22570%22 y=%22415%22 text-anchor=%22middle%22 fill=%22%232d3748%22 font-size=%2260%22 font-family=%22Arial%22>He</text><rect x=%22640%22 y=%22350%22 width=%22100%22 height=%22100%22 fill=%22white%22 stroke=%22%234a5568%22 stroke-width=%223%22/><text x=%22690%22 y=%22415%22 text-anchor=%22middle%22 fill=%22%232d3748%22 font-size=%2260%22 font-family=%22Arial%22>Li</text></svg>">
+        
+        <!-- General meta tags -->
+        <meta name="description" content="Create words using chemical element symbols from the periodic table! A fun chemistry word game.">
+        <meta name="keywords" content="chemistry, periodic table, elements, word game, science, education">
+        <meta name="author" content="Element Words">
         <style>
             * {
                 margin: 0;
