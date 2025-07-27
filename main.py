@@ -938,7 +938,7 @@ def favicon_svg():
 def apple_touch_icon():
     """Serve Apple touch icon"""
     response.headers['Cache-Control'] = 'public, max-age=86400'  # Cache for 1 day
-    return static_file('favicon.svg', root='./static')
+    return static_file('apple-touch-icon.png', root='./static')
 
 # API Documentation endpoint (moved to /api route)
 @app.get('/api')
