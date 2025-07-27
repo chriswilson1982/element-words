@@ -620,10 +620,6 @@ def element_words_app():
                 document.getElementById('og-image-alt').setAttribute('content', newTitle);
                 document.getElementById('og-url').setAttribute('content', window.location.href);
                 
-                // Update Twitter meta tags
-                document.getElementById('twitter-title').setAttribute('content', newTitle);
-                document.getElementById('twitter-description').setAttribute('content', newDescription);
-                
                 // Update general description meta tag
                 const descriptionMeta = document.querySelector('meta[name="description"]');
                 if (descriptionMeta) {
