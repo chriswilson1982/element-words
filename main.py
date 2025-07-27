@@ -119,8 +119,8 @@ def element_words_app():
         <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="96x96" href="/static/favicon-96x96.png" />
 
-        <!-- Apple Touch Icons - Default (for Apple Share Sheet) should be favicon-sized -->
-        <link rel="apple-touch-icon" href="/static/favicon-96x96.png" />
+        <!-- Apple Touch Icons - Default (for Apple Share Sheet) should be largest size -->
+        <link rel="apple-touch-icon" href="/static/apple-180x180-touch-icon.png" />
         <link rel="apple-touch-icon" sizes="57x57" href="/static/apple-57x57-touch-icon.png" />
         <link rel="apple-touch-icon" sizes="60x60" href="/static/apple-60x60-touch-icon.png" />
         <link rel="apple-touch-icon" sizes="72x72" href="/static/apple-72x72-touch-icon.png" />
@@ -1018,10 +1018,10 @@ def favicon_svg():
 @app.route('/apple-touch-icon.png')
 @app.route('/apple-touch-icon-precomposed.png')
 def apple_touch_icon():
-    """Serve Apple touch icon (favicon-sized for share sheet)"""
+    """Serve Apple touch icon (largest size for optimal display)"""
     response.headers['Cache-Control'] = 'public, max-age=86400'  # Cache for 1 day
     response.headers['Content-Type'] = 'image/png'
-    return static_file('favicon-96x96.png', root='./static')
+    return static_file('apple-180x180-touch-icon.png', root='./static')
 
 @app.route('/apple-touch-icon-180x180.png')
 def apple_touch_icon_180():
