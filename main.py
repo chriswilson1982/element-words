@@ -113,21 +113,34 @@ def element_words_app():
         <title>Element Words - Spell with Chemical Elements</title>
         
         <!-- Favicon - Multiple formats for better subdomain compatibility -->
-        <link rel="icon" type="image/png" href="/static/favicon-96x96.png" sizes="96x96" />
-        <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
-        <link rel="shortcut icon" href="/static/favicon.ico" />
+        <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="96x96" href="/static/favicon-96x96.png" />
+
+        <link rel="apple-touch-icon" sizes="57x57" href="/static/apple-57x57-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="60x60" href="/static/apple-60x60-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="72x72" href="/static/apple-72x72-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="76x76" href="/static/apple-76x76-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="/static/apple-114x114-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="120x120" href="/static/apple-120x120-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="144x144" href="/static/apple-144x144-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="/static/apple-152x152-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-180x180-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="196x196" href="/static/android-chrome-196x196.png" />
+        <link rel="icon" type="image/png" href="/static/android-chrome-192x192.png" sizes="192x192" type="image/png">
+        <link rel="icon" type="image/png" href="/static/android-chrome-256x256.png" sizes="256x256" type="image/png">
+        <link rel="icon" type="image/png" href="/static/android-chrome-384x384.png" sizes="384x384" type="image/png">
+        <link rel="icon" type="image/png" href="/static/android-chrome-512x512.png" sizes="512x512" type="image/png">
         
-        <!-- Apple Touch Icons - Multiple sizes for better compatibility -->
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="apple-touch-icon" sizes="57x57" href="/static/apple-touch-icon.png" />
-        <link rel="apple-touch-icon" sizes="60x60" href="/static/apple-touch-icon.png" />
-        <link rel="apple-touch-icon" sizes="72x72" href="/static/apple-touch-icon.png" />
-        <link rel="apple-touch-icon" sizes="76x76" href="/static/apple-touch-icon.png" />
-        <link rel="apple-touch-icon" sizes="114x114" href="/static/apple-touch-icon.png" />
-        <link rel="apple-touch-icon" sizes="120x120" href="/static/apple-touch-icon.png" />
-        <link rel="apple-touch-icon" sizes="144x144" href="/static/apple-touch-icon.png" />
-        <link rel="apple-touch-icon" sizes="152x152" href="/static/apple-touch-icon.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png" />
+        <meta name="theme-color" content="#663399" />
+          
+        <meta name="msapplication-TileColor" content="#663399" />
+        <meta name="msapplication-TileImage" content="/static/windows-tile.png">
+        <meta name="msapplication-square70x70logo" content="/static/windows-small-tile.png" />
+        <meta name="msapplication-square150x150logo" content="/static/windows-medium-tile.png" />
+        <meta name="msapplication-wide310x150logo" content="/static/windows-wide-tile.png" />
+        <meta name="msapplication-square310x310logo" content="/static/windows-large-tile.png" />
         
         <link rel="manifest" href="/static/site.webmanifest" />
         
