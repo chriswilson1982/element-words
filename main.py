@@ -114,10 +114,13 @@ def element_words_app():
         
         <!-- Favicon - Multiple formats for better subdomain compatibility -->
         <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" />
+        <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
         <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="96x96" href="/static/favicon-96x96.png" />
 
+        <!-- Apple Touch Icons - Default (for Apple Share Sheet) should be favicon-sized -->
+        <link rel="apple-touch-icon" href="/static/favicon-96x96.png" />
         <link rel="apple-touch-icon" sizes="57x57" href="/static/apple-57x57-touch-icon.png" />
         <link rel="apple-touch-icon" sizes="60x60" href="/static/apple-60x60-touch-icon.png" />
         <link rel="apple-touch-icon" sizes="72x72" href="/static/apple-72x72-touch-icon.png" />
@@ -151,7 +154,7 @@ def element_words_app():
         <meta name="apple-mobile-web-app-title" content="Element Words">
         <meta name="theme-color" content="#667eea">
         <meta name="msapplication-TileColor" content="#667eea">
-        <meta name="msapplication-TileImage" content="/static/apple-touch-icon.png">
+        <meta name="msapplication-TileImage" content="/static/favicon-96x96.png">
         
         <!-- Open Graph / Social Media Meta Tags -->
         <meta property="og:type" content="website">
@@ -1013,13 +1016,19 @@ def favicon_svg():
     return static_file('favicon.svg', root='./static')
 
 @app.route('/apple-touch-icon.png')
-@app.route('/apple-touch-icon-180x180.png')
 @app.route('/apple-touch-icon-precomposed.png')
 def apple_touch_icon():
-    """Serve Apple touch icon (with fallback variants)"""
+    """Serve Apple touch icon (favicon-sized for share sheet)"""
     response.headers['Cache-Control'] = 'public, max-age=86400'  # Cache for 1 day
     response.headers['Content-Type'] = 'image/png'
-    return static_file('apple-touch-icon.png', root='./static')
+    return static_file('favicon-96x96.png', root='./static')
+
+@app.route('/apple-touch-icon-180x180.png')
+def apple_touch_icon_180():
+    """Serve large Apple touch icon (for home screen)"""
+    response.headers['Cache-Control'] = 'public, max-age=86400'  # Cache for 1 day
+    response.headers['Content-Type'] = 'image/png'
+    return static_file('apple-180x180-touch-icon.png', root='./static')
 
 @app.route('/site.webmanifest')
 def web_manifest():
