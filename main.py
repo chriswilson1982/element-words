@@ -112,12 +112,13 @@ def element_words_app():
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Element Words - Spell with Chemical Elements</title>
         
-        <!-- Favicon - Multiple formats for better subdomain compatibility -->
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        <!-- Favicon - PNG optimized with fallbacks -->
+        <link rel="icon" href="/favicon.png" type="image/png">
         <link rel="icon" href="/static/favicon-32x32.png" sizes="32x32" type="image/png">
         <link rel="icon" href="/static/favicon-16x16.png" sizes="16x16" type="image/png">
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <link rel="apple-touch-icon" href="/static/favicon-32x32.png">
         
         <!-- Open Graph / Social Media Meta Tags -->
         <meta property="og:type" content="website">
@@ -921,23 +922,24 @@ def serve_static(filename):
     return static_file(filename, root='./static')
 
 # Favicon routes for better subdomain compatibility
+@app.route('/favicon.png')
+def favicon_png():
+    """Serve main PNG favicon"""
+    response.headers['Cache-Control'] = 'public, max-age=86400'  # Cache for 1 day
+    response.headers['Content-Type'] = 'image/png'
+    return static_file('favicon-32x32.png', root='./static')
+
 @app.route('/favicon.ico')
 def favicon_ico():
-    """Serve favicon.ico (many browsers still look for this)"""
+    """Serve favicon.ico fallback (for older browsers)"""
     response.headers['Cache-Control'] = 'public, max-age=86400'  # Cache for 1 day
     return static_file('favicon.ico', root='./static')
 
 @app.route('/favicon.svg')
 def favicon_svg():
-    """Serve SVG favicon directly"""
+    """Serve SVG favicon for modern browsers that prefer vector"""
     response.headers['Cache-Control'] = 'public, max-age=86400'  # Cache for 1 day
     response.headers['Content-Type'] = 'image/svg+xml'
-    return static_file('favicon.svg', root='./static')
-
-@app.route('/apple-touch-icon.png')
-def apple_touch_icon():
-    """Serve Apple touch icon"""
-    response.headers['Cache-Control'] = 'public, max-age=86400'  # Cache for 1 day
     return static_file('favicon.svg', root='./static')
 
 # API Documentation endpoint (moved to /api route)
