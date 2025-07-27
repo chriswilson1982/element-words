@@ -116,7 +116,19 @@ def element_words_app():
         <link rel="icon" type="image/png" href="/static/favicon-96x96.png" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
         <link rel="shortcut icon" href="/static/favicon.ico" />
+        
+        <!-- Apple Touch Icons - Multiple sizes for better compatibility -->
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="57x57" href="/static/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="60x60" href="/static/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="72x72" href="/static/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="76x76" href="/static/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="/static/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="120x120" href="/static/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="144x144" href="/static/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="/static/apple-touch-icon.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png" />
+        
         <link rel="manifest" href="/static/site.webmanifest" />
         
         <!-- Additional meta tags for PWA and share support -->
@@ -132,18 +144,22 @@ def element_words_app():
         <meta property="og:type" content="website">
         <meta property="og:title" content="Element Words - Spell with Chemical Elements" id="og-title">
         <meta property="og:description" content="Create words using chemical element symbols from the periodic table." id="og-description">
-        <meta property="og:image" content="/static/og-image.png" id="og-image">
+        <meta property="og:image" content="{request.url.replace(request.path, '')}/static/og-image.png" id="og-image">
         <meta property="og:image:alt" content="Element Words - Spell with Chemical Elements" id="og-image-alt">
         <meta property="og:image:width" content="1200">
         <meta property="og:image:height" content="630">
         <meta property="og:image:type" content="image/png">
-        <meta property="og:url" content="" id="og-url">
+        <meta property="og:url" content="{request.url}" id="og-url">
         
         <!-- Additional meta tags for better share support -->
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="Element Words - Spell with Chemical Elements" id="twitter-title">
         <meta name="twitter:description" content="Create words using chemical element symbols from the periodic table." id="twitter-description">
-        <meta name="twitter:image" content="/static/og-image.png" id="twitter-image">
+        <meta name="twitter:image" content="{request.url.replace(request.path, '')}/static/og-image.png" id="twitter-image">
+        
+        <!-- Apple Share Sheet specific meta tags -->
+        <meta name="apple-touch-fullscreen" content="yes">
+        <meta name="format-detection" content="telephone=no">
         
         <!-- Additional favicon formats for better compatibility -->
         <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
@@ -999,9 +1015,12 @@ def favicon_svg():
     return static_file('favicon.svg', root='./static')
 
 @app.route('/apple-touch-icon.png')
+@app.route('/apple-touch-icon-180x180.png')
+@app.route('/apple-touch-icon-precomposed.png')
 def apple_touch_icon():
-    """Serve Apple touch icon"""
+    """Serve Apple touch icon (with fallback variants)"""
     response.headers['Cache-Control'] = 'public, max-age=86400'  # Cache for 1 day
+    response.headers['Content-Type'] = 'image/png'
     return static_file('apple-touch-icon.png', root='./static')
 
 @app.route('/site.webmanifest')
