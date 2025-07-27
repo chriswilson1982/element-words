@@ -127,6 +127,7 @@ def element_words_app():
         <link rel="apple-touch-icon" sizes="144x144" href="/static/apple-144x144-touch-icon.png" />
         <link rel="apple-touch-icon" sizes="152x152" href="/static/apple-152x152-touch-icon.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-180x180-touch-icon.png" />
+        
         <link rel="icon" type="image/png" sizes="196x196" href="/static/android-chrome-196x196.png" />
         <link rel="icon" type="image/png" href="/static/android-chrome-192x192.png" sizes="192x192" type="image/png">
         <link rel="icon" type="image/png" href="/static/android-chrome-384x384.png" sizes="384x384" type="image/png">
@@ -172,11 +173,6 @@ def element_words_app():
         <!-- Apple Share Sheet specific meta tags -->
         <meta name="apple-touch-fullscreen" content="yes">
         <meta name="format-detection" content="telephone=no">
-        
-        <!-- Additional favicon formats for better compatibility -->
-        <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
-        <link rel="icon" type="image/png" href="/static/favicon-16x16.png" sizes="16x16">
-        <link rel="icon" type="image/png" href="/static/favicon-32x32.png" sizes="32x32">
 
         <!-- General meta tags -->
         <meta name="description" content="Create words using chemical element symbols from the periodic table.">
