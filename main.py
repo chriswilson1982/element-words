@@ -4,7 +4,7 @@ import os
 import json
 import yaml
 from datetime import datetime
-from bottle import Bottle, response, request, abort
+from bottle import Bottle, response, request, abort, static_file
 
 # List of all element symbols
 ELEMENTS = {"H": "Hydrogen", "He": "Helium", "Li": "Lithium", "Be": "Beryllium", "B": "Boron", "C": "Carbon", "N": "Nitrogen", "O": "Oxygen", "F": "Fluorine", "Ne": "Neon", "Na": "Sodium", "Mg": "Magnesium", "Al": "Aluminium", "Si": "Silicon", "P": "Phosphorus", "S": "Sulfur", "Cl": "Chlorine", "Ar": "Argon", "K": "Potassium", "Ca": "Calcium", "Sc": "Scandium", "Ti": "Titanium", "V": "Vanadium", "Cr": "Chromium", "Mn": "Manganese", "Fe": "Iron", "Co": "Cobalt", "Ni": "Nickel", "Cu": "Copper", "Zn": "Zinc", "Ga": "Gallium", "Ge": "Germanium", "As": "Arsenic", "Se": "Selenium", "Br": "Bromine", "Kr": "Krypton", "Rb": "Rubidium", "Sr": "Strontium", "Y": "Yttrium", "Zr": "Zirconium", "Nb": "Niobium", "Mo": "Molybdenum", "Tc": "Technetium", "Ru": "Ruthenium", "Rh": "Rhodium", "Pd": "Palladium", "Ag": "Silver", "Cd": "Cadmium", "In": "Indium", "Sn": "Tin", "Sb": "Antimony", "Te": "Tellurium", "I": "Iodine", "Xe": "Xenon", "Cs": "Cesium", "Ba": "Barium", "La": "Lanthanum", "Ce": "Cerium", "Pr": "Praseodymium", "Nd": "Neodymium", "Pm": "Promethium", "Sm": "Samarium", "Eu": "Europium", "Gd": "Gadolinium", "Tb": "Terbium", "Dy": "Dysprosium", "Ho": "Holmium", "Er": "Erbium", "Tm": "Thulium", "Yb": "Ytterbium", "Lu": "Lutetium", "Hf": "Hafnium", "Ta": "Tantalum", "W": "Tungsten", "Re": "Rhenium", "Os": "Osmium", "Ir": "Iridium", "Pt": "Platinum", "Au": "Gold", "Hg": "Mercury", "Tl": "Thallium", "Pb": "Lead", "Bi": "Bismuth", "Po": "Polonium", "At": "Astatine", "Rn": "Radon", "Fr": "Francium", "Ra": "Radium", "Ac": "Actinium", "Th": "Thorium", "Pa": "Protactinium", "U": "Uranium", "Np": "Neptunium", "Pu": "Plutonium", "Am": "Americium", "Cm": "Curium", "Bk": "Berkelium", "Cf": "Californium", "Es": "Einsteinium", "Fm": "Fermium", "Md": "Mendelevium", "No": "Nobelium", "Lr": "Lawrencium", "Rf": "Rutherfordium", "Db": "Dubnium", "Sg": "Seaborgium", "Bh": "Bohrium", "Hs": "Hassium", "Mt": "Meitnerium", "Ds": "Darmstadtium", "Rg": "Roentgenium", "Cn": "Copernicium", "Nh": "Nihonium", "Fl": "Flerovium", "Mc": "Moscovium", "Lv": "Livermorium", "Ts": "Tennessine", "Og": "Oganesson"}
@@ -112,24 +112,23 @@ def element_words_app():
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Element Words - Spell with Chemical Elements</title>
         
-        <!-- Favicon (atom emoji) -->
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚛️</text></svg>">
+        <!-- Favicon -->
+        <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+        <link rel="icon" href="/static/favicon-32x32.png" sizes="32x32" type="image/png">
+        <link rel="icon" href="/static/favicon-16x16.png" sizes="16x16" type="image/png">
+        <link rel="apple-touch-icon" href="/static/favicon.svg">
         
         <!-- Open Graph / Social Media Meta Tags -->
         <meta property="og:type" content="website">
         <meta property="og:title" content="Element Words - Spell with Chemical Elements">
         <meta property="og:description" content="Create words using chemical element symbols from the periodic table! A fun chemistry word game.">
-        <meta property="og:image" content="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 630%22><rect width=%221200%22 height=%22630%22 fill=%22%23667eea%22/><text x=%22600%22 y=%22200%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2280%22 font-family=%22Arial%22>⚛️ Element Words</text><text x=%22600%22 y=%22280%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2240%22 font-family=%22Arial%22>Spell with Chemical Elements</text><rect x=%22400%22 y=%22350%22 width=%22100%22 height=%22100%22 fill=%22white%22 stroke=%22%234a5568%22 stroke-width=%223%22/><text x=%22450%22 y=%22415%22 text-anchor=%22middle%22 fill=%22%232d3748%22 font-size=%2260%22 font-family=%22Arial%22>H</text><rect x=%22520%22 y=%22350%22 width=%22100%22 height=%22100%22 fill=%22white%22 stroke=%22%234a5568%22 stroke-width=%223%22/><text x=%22570%22 y=%22415%22 text-anchor=%22middle%22 fill=%22%232d3748%22 font-size=%2260%22 font-family=%22Arial%22>He</text><rect x=%22640%22 y=%22350%22 width=%22100%22 height=%22100%22 fill=%22white%22 stroke=%22%234a5568%22 stroke-width=%223%22/><text x=%22690%22 y=%22415%22 text-anchor=%22middle%22 fill=%22%232d3748%22 font-size=%2260%22 font-family=%22Arial%22>Li</text></svg>">
+        <meta property="og:image" content="https://your-domain.com/static/og-image.png">  <!-- Update with actual domain -->
+        <meta property="og:image:alt" content="Element Words - Spell with Chemical Elements">
         <meta property="og:image:width" content="1200">
         <meta property="og:image:height" content="630">
-        <meta property="og:url" content="">
+        <meta property="og:url" content="https://your-domain.com">  <!-- Update with actual domain -->
         
-        <!-- Twitter Card -->
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="Element Words - Spell with Chemical Elements">
-        <meta name="twitter:description" content="Create words using chemical element symbols from the periodic table! A fun chemistry word game.">
-        <meta name="twitter:image" content="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 630%22><rect width=%221200%22 height=%22630%22 fill=%22%23667eea%22/><text x=%22600%22 y=%22200%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2280%22 font-family=%22Arial%22>⚛️ Element Words</text><text x=%22600%22 y=%22280%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2240%22 font-family=%22Arial%22>Spell with Chemical Elements</text><rect x=%22400%22 y=%22350%22 width=%22100%22 height=%22100%22 fill=%22white%22 stroke=%22%234a5568%22 stroke-width=%223%22/><text x=%22450%22 y=%22415%22 text-anchor=%22middle%22 fill=%22%232d3748%22 font-size=%2260%22 font-family=%22Arial%22>H</text><rect x=%22520%22 y=%22350%22 width=%22100%22 height=%22100%22 fill=%22white%22 stroke=%22%234a5568%22 stroke-width=%223%22/><text x=%22570%22 y=%22415%22 text-anchor=%22middle%22 fill=%22%232d3748%22 font-size=%2260%22 font-family=%22Arial%22>He</text><rect x=%22640%22 y=%22350%22 width=%22100%22 height=%22100%22 fill=%22white%22 stroke=%22%234a5568%22 stroke-width=%223%22/><text x=%22690%22 y=%22415%22 text-anchor=%22middle%22 fill=%22%232d3748%22 font-size=%2260%22 font-family=%22Arial%22>Li</text></svg>">
-        
+
         <!-- General meta tags -->
         <meta name="description" content="Create words using chemical element symbols from the periodic table! A fun chemistry word game.">
         <meta name="keywords" content="chemistry, periodic table, elements, word game, science, education">
@@ -913,6 +912,12 @@ def element_words_app():
     </body>
     </html>
     """
+
+# Static file serving
+@app.route('/static/<filename>')
+def serve_static(filename):
+    """Serve static files (favicon, images, etc.)"""
+    return static_file(filename, root='./static')
 
 # API Documentation endpoint (moved to /api route)
 @app.get('/api')
