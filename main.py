@@ -799,10 +799,17 @@ def element_words_app():
             function shareCurrentState() {
                 const currentURL = window.location.href;
                 const word = wordInput.value.trim();
-                const shareTitle = document.title; // Use the current page title
+                
+                // Construct the title dynamically to ensure it matches the current state
+                const baseTitle = "Element Words";
+                const shareTitle = word ? `${baseTitle} - ${word.toUpperCase()}` : baseTitle;
+                
                 const shareText = word ? 
                     `Check out "${word.toUpperCase()}" spelled using chemical element symbols!` : 
                     'Check out this word made from chemical element symbols!';
+                
+                // Ensure meta tags are updated before sharing (for share sheet preview)
+                updatePageMetadata(word);
                 
                 // Try to use the Web Share API if available (modern browsers, especially mobile)
                 if (navigator.share) {
