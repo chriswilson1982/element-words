@@ -478,7 +478,7 @@ def element_words_app():
             
             <div class="input-section">
                 <div class="input-group">
-                    <input type="text" id="wordInput" placeholder="Enter a word (e.g., hero, water, science)" maxlength="50">
+                    <input type="text" id="wordInput" placeholder="Enter a word (e.g., hero, water, science)" maxlength="50" style="text-transform: lowercase;">
                     <button class="btn" onclick="searchWord()">Find Elements</button>
                     <button class="btn btn-secondary" id="shareBtn" onclick="shareCurrentState()" style="display: none;">Share</button>
                 </div>
@@ -575,7 +575,7 @@ def element_words_app():
             function updateURL() {
                 const urlParams = new URLSearchParams();
                 
-                const word = wordInput.value.trim();
+                const word = wordInput.value.trim().toLowerCase();
                 if (word) {
                     urlParams.set('word', word);
                 }
@@ -641,7 +641,7 @@ def element_words_app():
             }
             
             async function searchWord() {
-                const word = wordInput.value.trim();
+                const word = wordInput.value.trim().toLowerCase();
                 if (!word) {
                     showError('Please enter a word');
                     return;
