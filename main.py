@@ -779,7 +779,7 @@ def element_words_app():
             }
             
             // Share current state
-            function shareCurrentState() {
+            async function shareCurrentState() {
                 const currentURL = window.location.href;
                 const word = wordInput.value.trim();
                 const shareTitle = document.title; // Use the current page title
@@ -789,14 +789,33 @@ def element_words_app():
                 
                 // Try to use the Web Share API if available (modern browsers, especially mobile)
                 if (navigator.share) {
-                    navigator.share({
-                        title: shareTitle,
-                        text: shareText,
-                        url: currentURL
-                    }).catch(err => {
+                    try {
+                        // Fetch the og-image to include as a file for the share sheet thumbnail
+                        const response = await fetch('/static/og-image.png');
+                        const blob = await response.blob();
+                        const file = new File([blob], 'og-image.png', { type: 'image/png' });
+                        
+                        // Check if the browser supports sharing files
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            await navigator.share({
+                                title: shareTitle,
+                                text: shareText,
+                                url: currentURL,
+                                files: [file]
+                            });
+                        } else {
+                            // Fallback to sharing without files if not supported
+                            await navigator.share({
+                                title: shareTitle,
+                                text: shareText,
+                                url: currentURL
+                            });
+                        }
+                    } catch (err) {
+                        console.log('Share failed:', err);
                         // Fallback to copying URL if share fails
                         copyToClipboard(currentURL);
-                    });
+                    }
                 } else {
                     // Fallback: copy URL to clipboard
                     copyToClipboard(currentURL);
