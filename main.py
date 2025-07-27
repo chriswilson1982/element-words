@@ -157,18 +157,12 @@ def element_words_app():
         <meta property="og:type" content="website">
         <meta property="og:title" content="Element Words - Spell with Chemical Elements" id="og-title">
         <meta property="og:description" content="Create words using chemical element symbols from the periodic table." id="og-description">
-        <meta property="og:image" content="{request.url.replace(request.path, '')}/static/og-image.png" id="og-image">
+        <meta property="og:image" content="https://elements.chriswilson.app/static/og-image.png" id="og-image">
         <meta property="og:image:alt" content="Element Words - Spell with Chemical Elements" id="og-image-alt">
         <meta property="og:image:width" content="1200">
         <meta property="og:image:height" content="630">
         <meta property="og:image:type" content="image/png">
         <meta property="og:url" content="{request.url}" id="og-url">
-        
-        <!-- Additional meta tags for better share support -->
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="Element Words - Spell with Chemical Elements" id="twitter-title">
-        <meta name="twitter:description" content="Create words using chemical element symbols from the periodic table." id="twitter-description">
-        <meta name="twitter:image" content="{request.url.replace(request.path, '')}/static/og-image.png" id="twitter-image">
         
         <!-- Apple Share Sheet specific meta tags -->
         <meta name="apple-touch-fullscreen" content="yes">
