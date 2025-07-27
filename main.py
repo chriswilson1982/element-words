@@ -254,13 +254,16 @@ def element_words_app():
             .solutions-count {
                 text-align: center;
                 margin: 20px 0;
-                padding: 15px 20px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                border-radius: 12px;
-                font-size: 1.2rem;
-                font-weight: 600;
-                box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+                padding: 12px 20px;
+                background: transparent;
+                color: #667eea;
+                border: 2px solid #667eea;
+                border-radius: 8px;
+                font-size: 1.1rem;
+                font-weight: 500;
+                display: inline-block;
+                backdrop-filter: blur(10px);
+                background: rgba(102, 126, 234, 0.05);
             }
             
             .sorting-controls {
