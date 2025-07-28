@@ -3,6 +3,8 @@
 import os
 import json
 import yaml
+import gzip
+import io
 from datetime import datetime
 from bottle import Bottle, response, request, abort, static_file
 
@@ -87,10 +89,47 @@ def calculate_solution_score(elements_data):
             total_score += atomic_number
     return total_score
 
+def compress_response():
+    """Compress response if client accepts gzip and content is compressible"""
+    if 'gzip' in request.environ.get('HTTP_ACCEPT_ENCODING', ''):
+        content_type = response.content_type
+        if (content_type and 
+            (content_type.startswith('text/') or 
+             content_type.startswith('application/json') or
+             content_type.startswith('application/javascript') or
+             content_type.startswith('application/xml'))):
+            
+            body = response.body
+            if isinstance(body, str):
+                body = body.encode('utf-8')
+            elif hasattr(body, 'read'):
+                body = body.read()
+                
+            if len(body) > 1024:  # Only compress if > 1KB
+                buffer = io.BytesIO()
+                with gzip.GzipFile(fileobj=buffer, mode='wb') as f:
+                    f.write(body)
+                compressed = buffer.getvalue()
+                
+                if len(compressed) < len(body):  # Only use if actually smaller
+                    response.body = compressed
+                    response.headers['Content-Encoding'] = 'gzip'
+                    response.headers['Content-Length'] = str(len(compressed))
+
 @app.hook('after_request')
 def enable_cors():
-    """Enable CORS for all responses"""
+    """Enable CORS and security headers for all responses"""
     set_cors_headers()
+    
+    # Apply compression
+    compress_response()
+    
+    # Security headers
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    response.headers['Content-Security-Policy'] = "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'"
 
 @app.route('/api/<version>/options', method='OPTIONS')
 @app.route('/api/<version>/<path:path>', method='OPTIONS')
@@ -136,9 +175,9 @@ def element_words_app():
         <link rel="icon" type="image/png" href="/static/android-chrome-384x384.png" sizes="384x384" type="image/png">
         <link rel="icon" type="image/png" href="/static/android-chrome-512x512.png" sizes="512x512" type="image/png">
         
-        <meta name="theme-color" content="#663399" />
-          
-        <meta name="msapplication-TileColor" content="#663399" />
+                <meta name="theme-color" content="#667eea" />
+          
+        <meta name="msapplication-TileColor" content="#667eea" />
         <meta name="msapplication-TileImage" content="/static/windows-tile.png">
         <meta name="msapplication-square70x70logo" content="/static/windows-small-tile.png" />
         <meta name="msapplication-square150x150logo" content="/static/windows-medium-tile.png" />
@@ -1031,6 +1070,14 @@ def element_words_app():
 @app.route('/static/<filename>')
 def serve_static(filename):
     """Serve static files (favicon, images, etc.)"""
+    # Set aggressive caching for static assets
+    if filename.endswith(('.png', '.ico', '.svg', '.jpg', '.jpeg', '.gif', '.webp')):
+        response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'  # 1 year
+    elif filename.endswith(('.css', '.js')):
+        response.headers['Cache-Control'] = 'public, max-age=86400'  # 1 day
+    else:
+        response.headers['Cache-Control'] = 'public, max-age=3600'  # 1 hour
+    
     return static_file(filename, root='./static')
 
 # Favicon routes for better subdomain compatibility
