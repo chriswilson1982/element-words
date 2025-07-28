@@ -868,7 +868,7 @@ def element_words_app():
                     ogTitle.setAttribute('content', `Element Words - ${word.toUpperCase()}`);
                 }
                 if (ogDescription && word) {
-                    ogDescription.setAttribute('content', `Check out "${word.toUpperCase()}" spelled using chemical element symbols from the periodic table!`);
+                    ogDescription.setAttribute('content', `Check out "${word.toUpperCase()}" spelled using element symbols from the periodic table!`);
                 }
                 
                 // Add a small delay to ensure meta tags are processed before sharing
