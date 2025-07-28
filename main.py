@@ -591,7 +591,7 @@ def element_words_app():
                 </div>
                 <div class="checkbox-group">
                     <input type="checkbox" id="allowReversed">
-                    <label for="allowReversed">Allow reversed symbols (He + eH, Li + iL, etc.)</label>
+                    <label for="allowReversed">Allow reversed symbols</label>
                 </div>
             </div>
             
